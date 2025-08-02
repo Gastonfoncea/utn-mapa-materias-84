@@ -1,6 +1,8 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Subject } from '@/data/subjects';
 import { SubjectStatus } from '@/components/SubjectNode';
+import { useSubjectDatabase } from './useSubjectDatabase';
+import { useAuth } from './useAuth';
 
 // Tipos para el manejo de créditos de electivas
 interface ElectiveCredits {
@@ -10,9 +12,32 @@ interface ElectiveCredits {
 }
 
 export function useSubjectLogic(initialSubjects: Subject[]) {
+  const { user } = useAuth();
+  const { loadSubjectStates, saveSubjectState, resetAllSubjectStates } = useSubjectDatabase();
   const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
   const [highlightedPrereqs, setHighlightedPrereqs] = useState<{id: number, type: 'regular' | 'approved'}[]>([]);
   const [specialSubjectClickCount, setSpecialSubjectClickCount] = useState<Record<number, number>>({});
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load subject states from database when user logs in
+  useEffect(() => {
+    const loadStates = async () => {
+      if (user && !isLoaded) {
+        const savedStates = await loadSubjectStates();
+        setSubjects(initialSubjects.map(subject => ({
+          ...subject,
+          status: savedStates[subject.id] || subject.status
+        })));
+        setIsLoaded(true);
+      } else if (!user) {
+        // If user logs out, reset to default states
+        setSubjects(initialSubjects);
+        setIsLoaded(false);
+      }
+    };
+
+    loadStates();
+  }, [user, loadSubjectStates, isLoaded]);
 
   // Calcular créditos de electivas
   const calculateElectiveCredits = useCallback((allSubjects: Subject[]): ElectiveCredits => {
@@ -127,9 +152,16 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
         return subject;
       });
       
-      return updateSubjectStates(updated);
+      const finalSubjects = updateSubjectStates(updated);
+      
+      // Save to database if user is logged in
+      if (user) {
+        saveSubjectState(subjectId, newStatus);
+      }
+      
+      return finalSubjects;
     });
-  }, [updateSubjectStates]);
+  }, [updateSubjectStates, user, saveSubjectState]);
 
   // Manejar click en materias especiales (Seminario y Proyecto Final)
   const handleSpecialSubjectClick = useCallback((subjectId: number) => {
@@ -214,7 +246,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   }, [subjects, updateSubjectStatus, handleLockedSubjectClick, highlightedPrereqs]);
 
   // Reiniciar todas las materias
-  const resetAllSubjects = useCallback(() => {
+  const resetAllSubjects = useCallback(async () => {
     const resetSubjects = initialSubjects.map(subject => ({
       ...subject,
       status: (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0 ? 'available' : 'locked') as SubjectStatus
@@ -222,7 +254,12 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     setSubjects(resetSubjects);
     setHighlightedPrereqs([]);
     setSpecialSubjectClickCount({});
-  }, [initialSubjects]);
+    
+    if (user) {
+      // Reset in database
+      await resetAllSubjectStates();
+    }
+  }, [initialSubjects, user, resetAllSubjectStates]);
 
 
   // Estadísticas
