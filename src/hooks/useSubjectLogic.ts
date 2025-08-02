@@ -19,7 +19,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const credits = { year3: 0, year4: 0, year5: 0 };
     
     allSubjects.forEach(subject => {
-      if (subject.electiva && (subject.status === 'approved' || subject.status === 'regular')) {
+      if (subject.electiva && subject.status === 'approved') { // Solo créditos con electivas aprobadas
         if (subject.nivel === 3) {
           credits.year3 += 4;
         } else if (subject.nivel === 4) {
@@ -72,8 +72,9 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const credits = calculateElectiveCredits(updatedSubjects);
     
     return updatedSubjects.map(subject => {
-      if (subject.status === 'approved' || subject.status === 'failed' || subject.status === 'current' || subject.status === 'regular') {
-        return subject; // Mantener estados explícitos
+      // Mantener estados explícitos - agregar 'optional' a los estados que se mantienen
+      if (subject.status === 'approved' || subject.status === 'failed' || subject.status === 'current' || subject.status === 'regular' || subject.status === 'optional') {
+        return subject; 
       }
       
       // Para electivas, verificar si ya se tienen suficientes créditos
@@ -186,7 +187,9 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     }
 
     // Ciclo normal de estados para materias disponibles
-    const statusCycle: SubjectStatus[] = ['available', 'current', 'regular', 'approved', 'failed'];
+    const statusCycle: SubjectStatus[] = subject.electiva 
+      ? ['available', 'current', 'regular', 'approved', 'failed', 'optional']
+      : ['available', 'current', 'regular', 'approved', 'failed'];
     const currentIndex = statusCycle.indexOf(subject.status);
     const nextIndex = (currentIndex + 1) % statusCycle.length;
     const nextStatus = statusCycle[nextIndex];
@@ -227,6 +230,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       available: counts.available || 0,
       locked: counts.locked || 0,
       'elective-sufficient': counts['elective-sufficient'] || 0,
+      'optional': counts['optional'] || 0,
       total: subjects.length,
       electiveCredits: credits,
       isAnalista

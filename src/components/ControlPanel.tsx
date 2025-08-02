@@ -15,7 +15,9 @@ interface ControlPanelProps {
     available: number;
     locked: number;
     'elective-sufficient': number;
+    'optional': number;
     total: number;
+    electiveCredits: { year3: number; year4: number; year5: number; };
     isAnalista: boolean;
   };
 }
@@ -145,8 +147,34 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
             <span>No disponible ({stats.locked})</span>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <div className="w-3 h-3 rounded bg-purple-100 border border-purple-300 flex-shrink-0"></div>
-            <span>Créditos suficientes ({stats['elective-sufficient']})</span>
+            <div className="w-3 h-3 rounded bg-purple-200 border border-purple-400 flex-shrink-0"></div>
+            <span>Opcional ({stats['optional']})</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Créditos de electivas */}
+      <Card className="bg-gray-50 backdrop-blur">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <BarChart3 className="w-4 h-4" />
+            Créditos de Electivas
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="text-xs space-y-1">
+            <div className="flex justify-between">
+              <span>3° año:</span>
+              <span className="font-medium">{stats.electiveCredits.year3}/4</span>
+            </div>
+            <div className="flex justify-between">
+              <span>4° año:</span>
+              <span className="font-medium">{stats.electiveCredits.year4}/6</span>
+            </div>
+            <div className="flex justify-between">
+              <span>5° año:</span>
+              <span className="font-medium">{stats.electiveCredits.year5}/10</span>
+            </div>
           </div>
         </CardContent>
       </Card>

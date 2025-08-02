@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 
-export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked' | 'elective-sufficient';
+export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked' | 'elective-sufficient' | 'optional';
 
 interface SubjectData {
   nombre: string;
@@ -36,7 +36,8 @@ const statusStyles = {
   regular: 'bg-blue-700 text-white border-blue-700 shadow-lg',
   available: 'bg-white text-foreground border-primary hover:border-utn-blue shadow-md',
   locked: 'bg-gray-400 text-gray-700 border-gray-400 shadow-lg',
-  'elective-sufficient': 'bg-purple-100 text-purple-800 border-purple-300 shadow-md'
+  'elective-sufficient': 'bg-purple-100 text-purple-800 border-purple-300 shadow-md',
+  'optional': 'bg-purple-200 text-purple-900 border-purple-400 shadow-md'
 };
 
 const statusText = {
@@ -46,13 +47,14 @@ const statusText = {
   regular: 'Regular',
   available: 'Disponible',
   locked: 'No disponible',
-  'elective-sufficient': 'Créditos suficientes'
+  'elective-sufficient': 'Créditos suficientes',
+  'optional': 'Opcional'
 };
 
 function SubjectNode({ data, selected }: SubjectNodeProps) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const isInteractive = data.status === 'available' || data.status === 'approved' || 
-                       data.status === 'failed' || data.status === 'current' || data.status === 'regular';
+                       data.status === 'failed' || data.status === 'current' || data.status === 'regular' || data.status === 'optional';
 
   const getHighlightColor = () => {
     if (!data.isHighlighted) return '';
@@ -202,6 +204,17 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
               <div className="w-3 h-3 rounded bg-academic-red mr-2"></div>
               Desaprobada
             </Button>
+            {data.electiva && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                onClick={() => handleStatusSelect('optional')}
+              >
+                <div className="w-3 h-3 rounded bg-purple-200 border border-purple-400 mr-2"></div>
+                Opcional
+              </Button>
+            )}
           </div>
         </PopoverContent>
       )}
