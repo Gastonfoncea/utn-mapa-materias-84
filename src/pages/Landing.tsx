@@ -116,7 +116,7 @@ const Landing = () => {
       </div>
 
       {/* Features Section - Fondo Blanco */}
-      <div className="bg-background py-16 sm:py-24">
+      <div className="bg-background py-12 sm:py-20">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
@@ -162,7 +162,7 @@ const Landing = () => {
       </div>
 
       {/* Sección de estadísticas con tarjetas coloridas */}
-      <div className="bg-gray-50 py-16 sm:py-24">
+      <div className="bg-gray-50 py-12 sm:py-20">
         <div className="container mx-auto px-4">
           {/* Título principal */}
           <div className="text-center mb-16">
