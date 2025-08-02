@@ -85,6 +85,10 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
     
     // Materias especiales bloqueadas - abrir popover especial únicamente
     if (data.status === 'locked' && data.isSpecial) {
+      // PRIMERO limpiar highlights usando la función específica
+      if (data.onClearHighlights) {
+        data.onClearHighlights();
+      }
       setPopoverOpen(true);
       return;
     }
