@@ -117,7 +117,7 @@ const MapaConceptual = () => {
         <Background 
           gap={15} 
           size={0.8} 
-          color="#e0e7ff" 
+          color="#9ca3af40" 
         />
         <Controls 
           className="bg-white/90 backdrop-blur border-utn-blue !bottom-4 !right-4 !left-auto !top-auto" 
