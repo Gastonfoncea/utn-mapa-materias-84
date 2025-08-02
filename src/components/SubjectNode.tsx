@@ -173,15 +173,17 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
               <div className="w-3 h-3 rounded bg-blue-700 mr-2"></div>
               Regular
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleStatusSelect('approved')}
-            >
-              <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
-              Aprobada
-            </Button>
+            {data.canBeRendered && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                onClick={() => handleStatusSelect('approved')}
+              >
+                <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
+                Aprobada
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
