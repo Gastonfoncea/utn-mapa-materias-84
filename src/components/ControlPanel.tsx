@@ -13,6 +13,7 @@ interface ControlPanelProps {
     failed: number;
     available: number;
     locked: number;
+    'elective-sufficient': number;
     total: number;
   };
 }
@@ -75,9 +76,13 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
               <span>Disponible ({stats.available})</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs pt-1">
+          <div className="flex items-center gap-2 text-xs">
             <div className="w-3 h-3 rounded bg-academic-gray flex-shrink-0"></div>
             <span>No disponible ({stats.locked})</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <div className="w-3 h-3 rounded bg-purple-100 border border-purple-300 flex-shrink-0"></div>
+            <span>Créditos suficientes ({stats['elective-sufficient']})</span>
           </div>
         </CardContent>
       </Card>

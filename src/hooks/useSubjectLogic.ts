@@ -210,6 +210,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       failed: counts.failed || 0,
       available: counts.available || 0,
       locked: counts.locked || 0,
+      'elective-sufficient': counts['elective-sufficient'] || 0,
       total: subjects.length,
       electiveCredits: credits
     };
