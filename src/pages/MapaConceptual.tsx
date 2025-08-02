@@ -104,6 +104,7 @@ const MapaConceptual = () => {
         panOnDrag={true}
         zoomOnScroll={true}
         zoomOnPinch={true}
+        zoomOnDoubleClick={false}
         panOnScroll={false}
         preventScrolling={true}
         nodesDraggable={false}

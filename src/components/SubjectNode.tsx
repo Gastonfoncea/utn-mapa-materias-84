@@ -26,9 +26,9 @@ const statusStyles = {
   approved: 'bg-academic-green text-white border-academic-green shadow-lg',
   failed: 'bg-academic-red text-white border-academic-red shadow-lg',
   current: 'bg-academic-yellow text-gray-800 border-academic-yellow shadow-lg',
-  regular: 'bg-academic-blue text-white border-academic-blue shadow-lg',
+  regular: 'bg-blue-700 text-white border-blue-700 shadow-lg',
   available: 'bg-white text-foreground border-primary hover:border-utn-blue shadow-md',
-  locked: 'bg-academic-gray text-gray-600 border-academic-gray opacity-70',
+  locked: 'bg-gray-400 text-gray-700 border-gray-400 shadow-lg',
   'elective-sufficient': 'bg-purple-100 text-purple-800 border-purple-300 shadow-md'
 };
 
