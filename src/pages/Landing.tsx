@@ -15,10 +15,10 @@ const Landing = () => {
       <Header />
       {/* Hero Section - Cursor Style */}
       <div className="relative overflow-hidden">
-        {/* Cursor-style gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-700 via-purple-800 to-indigo-900" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/30 via-pink-500/20 to-cyan-400/30" />
-        <div className="absolute inset-0 bg-gradient-to-bl from-green-400/20 via-transparent to-blue-600/30" />
+        {/* Gray gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-gray-600/30 via-gray-500/20 to-gray-400/30" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-gray-300/20 via-transparent to-gray-800/30" />
         
         {/* Grain texture overlay */}
         <div className="absolute inset-0 opacity-20 bg-noise" />
@@ -107,12 +107,12 @@ const Landing = () => {
         </div>
       </div>
 
-      {/* CTA Section - Same style as hero */}
+      {/* CTA Section - Same gray gradient as hero */}
       <div className="relative overflow-hidden">
-        {/* Same gradient as hero section */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-700 via-purple-800 to-indigo-900" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/30 via-pink-500/20 to-cyan-400/30" />
-        <div className="absolute inset-0 bg-gradient-to-bl from-green-400/20 via-transparent to-blue-600/30" />
+        {/* Same gray gradient as hero section */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-gray-600/30 via-gray-500/20 to-gray-400/30" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-gray-300/20 via-transparent to-gray-800/30" />
         
         {/* Grain texture overlay */}
         <div className="absolute inset-0 opacity-20 bg-noise" />
