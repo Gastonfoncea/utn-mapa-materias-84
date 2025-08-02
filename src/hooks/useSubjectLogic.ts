@@ -19,7 +19,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const credits = { year3: 0, year4: 0, year5: 0 };
     
     allSubjects.forEach(subject => {
-      if (subject.electiva && (subject.status === 'approved' || subject.status === 'regular')) {
+      if (subject.electiva && subject.status === 'approved') { // Solo créditos con electivas aprobadas
         if (subject.nivel === 3) {
           credits.year3 += 4;
         } else if (subject.nivel === 4) {
@@ -72,19 +72,36 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const credits = calculateElectiveCredits(updatedSubjects);
     
     return updatedSubjects.map(subject => {
-      if (subject.status === 'approved' || subject.status === 'failed' || subject.status === 'current' || subject.status === 'regular') {
-        return subject; // Mantener estados explícitos
+      // Mantener estados explícitos - agregar 'optional' a los estados que se mantienen
+      if (subject.status === 'approved' || subject.status === 'failed' || subject.status === 'current' || subject.status === 'regular' || subject.status === 'optional') {
+        return subject; 
       }
       
       // Para electivas, verificar si ya se tienen suficientes créditos
       if (subject.electiva && subject.status !== 'elective-sufficient') {
+        // Backend de Aplicaciones (id: 201) no puede ser opcional
+        if (subject.id === 201) {
+          const available = isSubjectAvailable(subject, updatedSubjects);
+          return {
+            ...subject,
+            status: (available ? 'available' : 'locked') as SubjectStatus
+          };
+        }
+
         const hasEnoughCredits = 
           (subject.nivel === 3 && credits.year3 >= 4) ||
           (subject.nivel === 4 && credits.year4 >= 6) ||
           (subject.nivel === 5 && credits.year5 >= 10);
         
         if (hasEnoughCredits) {
-          return { ...subject, status: 'elective-sufficient' as SubjectStatus };
+          // Si ya se tienen suficientes créditos, cambiar automáticamente a opcional
+          return { ...subject, status: 'optional' as SubjectStatus };
+        }
+
+        // Si no se tienen suficientes créditos pero está disponible, mantener como elective-sufficient
+        const available = isSubjectAvailable(subject, updatedSubjects);
+        if (available && subject.status === 'locked') {
+          return { ...subject, status: 'available' as SubjectStatus };
         }
       }
       
@@ -99,6 +116,9 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
   // Cambiar estado de una materia
   const updateSubjectStatus = useCallback((subjectId: number, newStatus: SubjectStatus) => {
+    // Limpiar highlights al cambiar cualquier estado
+    setHighlightedPrereqs([]);
+    
     setSubjects(prevSubjects => {
       const updated = prevSubjects.map(subject => {
         if (subject.id === subjectId) {
@@ -109,7 +129,6 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       return updateSubjectStates(updated);
     });
-    setHighlightedPrereqs([]); // Limpiar highlights
   }, [updateSubjectStates]);
 
   // Manejar click en materias especiales (Seminario y Proyecto Final)
@@ -161,32 +180,38 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
 
-    // Materias especiales con correlativasRendir
-    if (subject.correlativasRendir.length > 0) {
-      handleSpecialSubjectClick(subjectId);
-      return;
-    }
-
-    // Materias bloqueadas
-    if (subject.status === 'locked') {
+    // Materias bloqueadas (NO especiales) - mostrar correlativas
+    if (subject.status === 'locked' && subject.correlativasRendir.length === 0) {
       handleLockedSubjectClick(subjectId);
       return;
     }
 
-    // Electivas con créditos suficientes (permitir cambiar estado si se quiere)
+    // Materias especiales bloqueadas - NO hacer nada aquí, solo se maneja por el popover
+    if (subject.status === 'locked' && subject.correlativasRendir.length > 0) {
+      return; // No ejecutar nada, solo se abre el popover
+    }
+
+    // Limpiar highlights cuando se interactúa con materias normales
+    if (highlightedPrereqs.length > 0) {
+      setHighlightedPrereqs([]);
+    }
+
+    // Electivas con créditos suficientes
     if (subject.status === 'elective-sufficient') {
       updateSubjectStatus(subjectId, 'available');
       return;
     }
 
-    // Ciclo normal de estados
-    const statusCycle: SubjectStatus[] = ['available', 'current', 'regular', 'approved', 'failed'];
+    // Ciclo normal de estados para materias disponibles
+    const statusCycle: SubjectStatus[] = subject.electiva 
+      ? ['available', 'current', 'regular', 'approved', 'failed', 'optional']
+      : ['available', 'current', 'regular', 'approved', 'failed'];
     const currentIndex = statusCycle.indexOf(subject.status);
     const nextIndex = (currentIndex + 1) % statusCycle.length;
     const nextStatus = statusCycle[nextIndex];
 
     updateSubjectStatus(subjectId, nextStatus);
-  }, [subjects, updateSubjectStatus, handleSpecialSubjectClick, handleLockedSubjectClick]);
+  }, [subjects, updateSubjectStatus, handleLockedSubjectClick, highlightedPrereqs]);
 
   // Reiniciar todas las materias
   const resetAllSubjects = useCallback(() => {
@@ -208,6 +233,12 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     }, {} as Record<SubjectStatus, number>);
 
     const credits = calculateElectiveCredits(subjects);
+    
+    // Verificar si se cumple para Analista o Ingeniero
+    const seminarioIntegrador = subjects.find(s => s.id === 99);
+    const proyectoFinal = subjects.find(s => s.id === 36);
+    const isAnalista = seminarioIntegrador?.status === 'approved' && credits.year3 >= 4;
+    const isIngeniero = proyectoFinal?.status === 'approved' && credits.year4 >= 6 && credits.year5 >= 10;
 
     return {
       approved: counts.approved || 0,
@@ -217,8 +248,11 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       available: counts.available || 0,
       locked: counts.locked || 0,
       'elective-sufficient': counts['elective-sufficient'] || 0,
+      'optional': counts['optional'] || 0,
       total: subjects.length,
-      electiveCredits: credits
+      electiveCredits: credits,
+      isAnalista,
+      isIngeniero
     };
   }, [subjects, calculateElectiveCredits]);
 
@@ -226,6 +260,9 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   const handleSpecialAction = useCallback((subjectId: number, action: 'cursar' | 'rendir' | 'normal') => {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
+
+    // Siempre limpiar highlights primero
+    setHighlightedPrereqs([]);
 
     if (action === 'cursar') {
       // Mostrar correlativas para cursar
@@ -236,17 +273,21 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       // Mostrar correlativas para rendir
       const renderPrereqs = subject.correlativasRendir.map(id => ({ id, type: 'approved' as const }));
       setHighlightedPrereqs(renderPrereqs);
-    } else {
-      // Normal - limpiar highlights
-      setHighlightedPrereqs([]);
     }
+    // Si action === 'normal', los highlights ya se limpiaron arriba
   }, [subjects]);
+
+  // Función para limpiar highlights solamente
+  const clearHighlights = useCallback(() => {
+    setHighlightedPrereqs([]);
+  }, []);
 
   return {
     subjects,
     cycleSubjectStatus,
     updateSubjectStatus,
     handleSpecialAction,
+    clearHighlights,
     resetAllSubjects,
     stats,
     highlightedPrereqs,

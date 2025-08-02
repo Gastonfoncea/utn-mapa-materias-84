@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 
-export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked' | 'elective-sufficient';
+export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked' | 'elective-sufficient' | 'optional';
 
 interface SubjectData {
   nombre: string;
@@ -15,7 +15,9 @@ interface SubjectData {
   onClick?: () => void;
   onStatusChange?: (status: SubjectStatus) => void;
   onSpecialAction?: (action: 'cursar' | 'rendir' | 'normal') => void;
+  onClearHighlights?: () => void;
   isSpecial?: boolean;
+  canBeRendered?: boolean;
   isHighlighted?: boolean;
   highlightType?: 'regular' | 'approved';
 }
@@ -34,7 +36,8 @@ const statusStyles = {
   regular: 'bg-blue-700 text-white border-blue-700 shadow-lg',
   available: 'bg-white text-foreground border-primary hover:border-utn-blue shadow-md',
   locked: 'bg-gray-400 text-gray-700 border-gray-400 shadow-lg',
-  'elective-sufficient': 'bg-purple-100 text-purple-800 border-purple-300 shadow-md'
+  'elective-sufficient': 'bg-purple-100 text-purple-800 border-purple-300 shadow-md',
+  'optional': 'bg-purple-200 text-purple-900 border-purple-400 shadow-md'
 };
 
 const statusText = {
@@ -44,13 +47,14 @@ const statusText = {
   regular: 'Regular',
   available: 'Disponible',
   locked: 'No disponible',
-  'elective-sufficient': 'Créditos suficientes'
+  'elective-sufficient': 'Créditos suficientes',
+  'optional': 'Opcional'
 };
 
 function SubjectNode({ data, selected }: SubjectNodeProps) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const isInteractive = data.status === 'available' || data.status === 'approved' || 
-                       data.status === 'failed' || data.status === 'current' || data.status === 'regular';
+                       data.status === 'failed' || data.status === 'current' || data.status === 'regular' || data.status === 'optional';
 
   const getHighlightColor = () => {
     if (!data.isHighlighted) return '';
@@ -82,16 +86,30 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Para materias no interactivas o bloqueadas, usar el onClick original
-    if (!isInteractive || data.status === 'locked') {
-      if (data.onClick) {
-        data.onClick();
+    // Materias especiales bloqueadas - abrir popover especial únicamente
+    if (data.status === 'locked' && data.isSpecial) {
+      // PRIMERO limpiar highlights usando la función específica
+      if (data.onClearHighlights) {
+        data.onClearHighlights();
       }
+      setPopoverOpen(true);
       return;
     }
     
-    // Para materias interactivas, abrir el popover
-    setPopoverOpen(true);
+    // Materias interactivas que NO están bloqueadas - limpiar highlights y abrir popover
+    if (isInteractive && data.status !== 'locked') {
+      // PRIMERO limpiar highlights usando la función específica
+      if (data.onClearHighlights) {
+        data.onClearHighlights();
+      }
+      setPopoverOpen(true);
+      return;
+    }
+    
+    // Para materias bloqueadas normales y no interactivas - usar onClick original
+    if (data.onClick) {
+      data.onClick();
+    }
   };
 
   return (
@@ -138,87 +156,100 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       {isInteractive && data.status !== 'locked' && (
         <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
           <div className="flex flex-col gap-1">
-            {data.isSpecial ? (
-              // Menú especial para materias con correlativas para rendir
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleSpecialAction('cursar')}
-                >
-                  <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
-                  Para cursar
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleSpecialAction('rendir')}
-                >
-                  <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
-                  Para rendir
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleSpecialAction('normal')}
-                >
-                  <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
-                  Normal
-                </Button>
-              </>
-            ) : (
-              // Menú normal para todas las demás materias
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleStatusSelect('available')}
-                >
-                  <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
-                  Disponible
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleStatusSelect('regular')}
-                >
-                  <div className="w-3 h-3 rounded bg-blue-700 mr-2"></div>
-                  Regular
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleStatusSelect('approved')}
-                >
-                  <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
-                  Aprobada
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleStatusSelect('current')}
-                >
-                  <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
-                  Cursando
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-                  onClick={() => handleStatusSelect('failed')}
-                >
-                  <div className="w-3 h-3 rounded bg-academic-red mr-2"></div>
-                  Desaprobada
-                </Button>
-              </>
+            {/* Menú normal para todas las materias cuando están disponibles */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={() => handleStatusSelect('available')}
+            >
+              <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
+              Disponible
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={() => handleStatusSelect('regular')}
+            >
+              <div className="w-3 h-3 rounded bg-blue-700 mr-2"></div>
+              Regular
+            </Button>
+            {data.canBeRendered && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                onClick={() => handleStatusSelect('approved')}
+              >
+                <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
+                Aprobada
+              </Button>
             )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={() => handleStatusSelect('current')}
+            >
+              <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
+              Cursando
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={() => handleStatusSelect('failed')}
+            >
+              <div className="w-3 h-3 rounded bg-academic-red mr-2"></div>
+              Desaprobada
+            </Button>
+            {data.electiva && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                onClick={() => handleStatusSelect('optional')}
+              >
+                <div className="w-3 h-3 rounded bg-purple-200 border border-purple-400 mr-2"></div>
+                Opcional
+              </Button>
+            )}
+          </div>
+        </PopoverContent>
+      )}
+      
+      {data.status === 'locked' && data.isSpecial && (
+        <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
+          <div className="flex flex-col gap-1">
+            {/* Menú especial solo para materias bloqueadas que son especiales */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={() => handleSpecialAction('cursar')}
+            >
+              <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
+              Para cursar
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={() => handleSpecialAction('rendir')}
+            >
+              <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
+              Para rendir
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+              onClick={() => handleSpecialAction('normal')}
+            >
+              <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
+              Normal
+            </Button>
           </div>
         </PopoverContent>
       )}

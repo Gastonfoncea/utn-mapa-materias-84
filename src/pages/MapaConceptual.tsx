@@ -26,9 +26,11 @@ const MapaConceptual = () => {
     cycleSubjectStatus,
     updateSubjectStatus,
     handleSpecialAction,
+    clearHighlights,
     resetAllSubjects, 
     stats,
-    highlightedPrereqs
+    highlightedPrereqs,
+    isSubjectReadyToTest
   } = useSubjectLogic(subjects);
 
   // Convertir subjects a nodes para react-flow
@@ -47,7 +49,9 @@ const MapaConceptual = () => {
       onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
         handleSpecialAction(subject.id, action);
       },
+      onClearHighlights: clearHighlights,
       isSpecial: subject.correlativasRendir.length > 0,
+      canBeRendered: isSubjectReadyToTest(subject, currentSubjects),
       isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
       highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
     },
@@ -74,14 +78,16 @@ const MapaConceptual = () => {
         onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
           handleSpecialAction(subject.id, action);
         },
+        onClearHighlights: clearHighlights,
         isSpecial: subject.correlativasRendir.length > 0,
+        canBeRendered: isSubjectReadyToTest(subject, currentSubjects),
         isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
         highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
       },
       draggable: false,
     }));
     setNodes(updatedNodes);
-  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, highlightedPrereqs]);
+  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, clearHighlights, highlightedPrereqs, isSubjectReadyToTest]);
 
   // Actualizar nodos cuando cambien los subjects
   React.useEffect(() => {

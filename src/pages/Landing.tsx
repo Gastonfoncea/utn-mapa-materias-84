@@ -4,6 +4,9 @@ import { jwtDecode } from 'jwt-decode';
 import { BookOpen, GraduationCap, LogOut, TrendingUp, Users } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { GraduationCap, BookOpen, TrendingUp, Users, LogOut, Clock, Target } from "lucide-react";
+import Header from "@/components/Header";
+import { useAuth } from "@/hooks/useAuth";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -155,6 +158,121 @@ const Landing = () => {
                 Específicamente creado para estudiantes de Ingeniería de la UTN Córdoba, 
                 con todas las correlativas actualizadas.
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sección de estadísticas con tarjetas coloridas */}
+      <div className="bg-gray-50 py-12 sm:py-20">
+        <div className="container mx-auto px-4">
+          {/* Título principal */}
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              Planificar tu carrera es más <span className="text-blue-600">fácil</span> 😊
+            </h2>
+          </div>
+
+          {/* Grid de tarjetas estadísticas */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Tarjeta 1 - Rendimiento elevado */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-blue-100 rounded-full">
+                  <Target className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-700">Planificación inteligente</h3>
+              </div>
+              
+              <div className="mb-6">
+                <div className="text-2xl font-bold text-gray-900 mb-2">
+                  <span className="text-3xl">92%</span> mejora su organización.
+                </div>
+                <p className="text-gray-600 leading-relaxed">
+                  Nuestro mapa te ayuda a enfocarte solo en las materias que puedes cursar, 
+                  optimizando tu tiempo y evitando frustración.
+                </p>
+              </div>
+
+              {/* Gráfico circular azul */}
+              <div className="flex justify-center">
+                <div className="relative w-32 h-32">
+                  <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="40"
+                      stroke="#e5e7eb"
+                      strokeWidth="8"
+                      fill="none"
+                    />
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="40"
+                      stroke="#3b82f6"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeDasharray={`${92 * 2.51} 251`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="text-xl font-bold text-gray-900">+2400</div>
+                    <div className="text-sm text-gray-600">Estudiantes</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tarjeta 2 - Productividad real */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-purple-100 rounded-full">
+                  <Clock className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-700">Ahorro de tiempo</h3>
+              </div>
+              
+              <div className="mb-6">
+                <div className="text-2xl font-bold text-gray-900 mb-2">
+                  <span className="text-3xl">85%</span> reduce tiempo de planificación.
+                </div>
+                <p className="text-gray-600 leading-relaxed">
+                  Visualización automática de correlativas = menos tiempo perdido 
+                  planificando, más tiempo estudiando con foco total.
+                </p>
+              </div>
+
+              {/* Gráfico circular púrpura */}
+              <div className="flex justify-center">
+                <div className="relative w-32 h-32">
+                  <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="40"
+                      stroke="#e5e7eb"
+                      strokeWidth="8"
+                      fill="none"
+                    />
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="40"
+                      stroke="#9333ea"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeDasharray={`${85 * 2.51} 251`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="text-xl font-bold text-gray-900">+1800</div>
+                    <div className="text-sm text-gray-600">Estudiantes</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
