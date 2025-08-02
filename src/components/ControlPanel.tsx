@@ -27,7 +27,25 @@ interface ControlPanelProps {
 export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const progress = ((stats.approved / stats.total) * 100).toFixed(1);
+  
+  // Calcular progreso con lógica especial para electivas extras
+  const calculateProgress = () => {
+    if (stats.isIngeniero) {
+      return 100; // Una vez ingeniero, progreso al 100%
+    }
+    
+    // Calcular el total ajustado excluyendo electivas extras
+    const electiveExtras4to = Math.max(0, (stats.electiveCredits.year4 / 3) - 2); // A partir de la 3era electiva de 4to
+    const electiveExtras5to = Math.max(0, (stats.electiveCredits.year5 / 3) - 4); // A partir de la 5ta electiva de 5to
+    const totalExtras = electiveExtras4to + electiveExtras5to;
+    
+    const adjustedTotal = stats.total - totalExtras;
+    const adjustedApproved = stats.approved - totalExtras;
+    
+    return ((adjustedApproved / adjustedTotal) * 100).toFixed(1);
+  };
+  
+  const progress = calculateProgress();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
