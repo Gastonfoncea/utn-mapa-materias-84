@@ -88,8 +88,12 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       return;
     }
     
-    // Materias interactivas que NO están bloqueadas - abrir popover normal
+    // Materias interactivas que NO están bloqueadas - limpiar highlights y abrir popover
     if (isInteractive && data.status !== 'locked') {
+      // PRIMERO limpiar highlights antes de abrir el popover
+      if (data.onClick) {
+        data.onClick(); // Esto limpia los highlights
+      }
       setPopoverOpen(true);
       return;
     }
