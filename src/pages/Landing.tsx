@@ -75,6 +75,15 @@ const Landing = () => {
               lleva un seguimiento inteligente de tu progreso académico.
             </p>
             
+            {/* User greeting above button */}
+            {user && (
+              <div className="mb-6">
+                <p className="text-2xl text-white/90 font-medium">
+                  ¡Hola, {user.name || user.given_name || user.family_name || user.email}!
+                </p>
+              </div>
+            )}
+            
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
@@ -97,18 +106,15 @@ const Landing = () => {
               )}
               
               {user && (
-                <div className="flex items-center gap-4">
-                  <span className="text-white/90 text-lg">¡Hola, {user.name || user.given_name || user.family_name || user.email}!</span>
-                  <Button 
-                    onClick={handleSignOut}
-                    variant="outline"
-                    size="lg"
-                    className="text-lg px-6 py-6 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 hover:border-white/50 shadow-xl transition-all duration-300 rounded-xl font-semibold"
-                  >
-                    <LogOut className="w-5 h-5 mr-2" />
-                    Cerrar Sesión
-                  </Button>
-                </div>
+                <Button 
+                  onClick={handleSignOut}
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-6 py-6 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 hover:border-white/50 shadow-xl transition-all duration-300 rounded-xl font-semibold"
+                >
+                  <LogOut className="w-5 h-5 mr-2" />
+                  Cerrar Sesión
+                </Button>
               )}
             </div>
           </div>
