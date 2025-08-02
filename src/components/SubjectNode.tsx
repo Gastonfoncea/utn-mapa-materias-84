@@ -82,22 +82,22 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Para materias especiales bloqueadas, solo abrir el popover sin ejecutar onClick
+    // Materias especiales bloqueadas - abrir popover especial únicamente
     if (data.status === 'locked' && data.isSpecial) {
       setPopoverOpen(true);
       return;
     }
     
-    // Para otras materias no interactivas o bloqueadas, usar el onClick original
-    if (!isInteractive || data.status === 'locked') {
-      if (data.onClick) {
-        data.onClick();
-      }
+    // Materias interactivas que NO están bloqueadas - abrir popover normal
+    if (isInteractive && data.status !== 'locked') {
+      setPopoverOpen(true);
       return;
     }
     
-    // Para materias interactivas, abrir el popover
-    setPopoverOpen(true);
+    // Para materias bloqueadas normales y no interactivas - usar onClick original
+    if (data.onClick) {
+      data.onClick();
+    }
   };
 
   return (

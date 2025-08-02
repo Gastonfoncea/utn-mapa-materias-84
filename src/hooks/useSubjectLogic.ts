@@ -99,6 +99,9 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
   // Cambiar estado de una materia
   const updateSubjectStatus = useCallback((subjectId: number, newStatus: SubjectStatus) => {
+    // Limpiar highlights al cambiar cualquier estado
+    setHighlightedPrereqs([]);
+    
     setSubjects(prevSubjects => {
       const updated = prevSubjects.map(subject => {
         if (subject.id === subjectId) {
@@ -109,7 +112,6 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       return updateSubjectStates(updated);
     });
-    setHighlightedPrereqs([]); // Limpiar highlights al cambiar estado
   }, [updateSubjectStates]);
 
   // Manejar click en materias especiales (Seminario y Proyecto Final)
@@ -161,35 +163,36 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
 
-    // Materias especiales con correlativasRendir
-    if (subject.correlativasRendir.length > 0) {
-      handleSpecialSubjectClick(subjectId);
-      return;
-    }
-
-    // Materias bloqueadas (no especiales)
-    if (subject.status === 'locked') {
+    // Materias bloqueadas (NO especiales) - mostrar correlativas
+    if (subject.status === 'locked' && subject.correlativasRendir.length === 0) {
       handleLockedSubjectClick(subjectId);
       return;
     }
 
-    // Limpiar highlights cuando se interactúa con materias normales
-    setHighlightedPrereqs([]);
+    // Materias especiales bloqueadas - NO hacer nada aquí, solo se maneja por el popover
+    if (subject.status === 'locked' && subject.correlativasRendir.length > 0) {
+      return; // No ejecutar nada, solo se abre el popover
+    }
 
-    // Electivas con créditos suficientes (permitir cambiar estado si se quiere)
+    // Limpiar highlights cuando se interactúa con materias normales
+    if (highlightedPrereqs.length > 0) {
+      setHighlightedPrereqs([]);
+    }
+
+    // Electivas con créditos suficientes
     if (subject.status === 'elective-sufficient') {
       updateSubjectStatus(subjectId, 'available');
       return;
     }
 
-    // Ciclo normal de estados
+    // Ciclo normal de estados para materias disponibles
     const statusCycle: SubjectStatus[] = ['available', 'current', 'regular', 'approved', 'failed'];
     const currentIndex = statusCycle.indexOf(subject.status);
     const nextIndex = (currentIndex + 1) % statusCycle.length;
     const nextStatus = statusCycle[nextIndex];
 
     updateSubjectStatus(subjectId, nextStatus);
-  }, [subjects, updateSubjectStatus, handleSpecialSubjectClick, handleLockedSubjectClick]);
+  }, [subjects, updateSubjectStatus, handleLockedSubjectClick, highlightedPrereqs]);
 
   // Reiniciar todas las materias
   const resetAllSubjects = useCallback(() => {
@@ -230,6 +233,9 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
 
+    // Siempre limpiar highlights primero
+    setHighlightedPrereqs([]);
+
     if (action === 'cursar') {
       // Mostrar correlativas para cursar
       const regularPrereqs = subject.correlativasRegular.map(id => ({ id, type: 'regular' as const }));
@@ -239,10 +245,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       // Mostrar correlativas para rendir
       const renderPrereqs = subject.correlativasRendir.map(id => ({ id, type: 'approved' as const }));
       setHighlightedPrereqs(renderPrereqs);
-    } else {
-      // Normal - limpiar highlights
-      setHighlightedPrereqs([]);
     }
+    // Si action === 'normal', los highlights ya se limpiaron arriba
   }, [subjects]);
 
   return {
