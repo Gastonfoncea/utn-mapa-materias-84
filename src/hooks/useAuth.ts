@@ -7,13 +7,13 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Get initial session
+    // Obtener sesión inicial
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Listen for auth changes
+    // Escuchar cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null)
@@ -31,12 +31,12 @@ export function useAuth() {
         redirectTo: `${window.location.origin}/mapa`
       }
     })
-    if (error) console.error('Error signing in with Google:', error)
+    if (error) console.error('Error al iniciar sesión con Google:', error)
   }
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
-    if (error) console.error('Error signing out:', error)
+    if (error) console.error('Error al cerrar sesión:', error)
   }
 
   return {
