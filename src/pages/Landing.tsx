@@ -37,7 +37,7 @@ const Landing = () => {
               Planifica tu carrera en la
             </h1>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-white mb-8 leading-[0.9] tracking-tight">
-              <span className="text-cyan-300">UTN Córdoba</span>
+              <span className="text-white">UTN Córdoba</span>
             </h1>
             
             {/* Subtitle */}
@@ -55,15 +55,6 @@ const Landing = () => {
               >
                 <BookOpen className="w-5 h-5 mr-3" />
                 Comenzar a Planificar
-              </Button>
-              
-              <Button 
-                onClick={handleStartPlanning}
-                variant="outline"
-                size="lg"
-                className="text-lg px-10 py-6 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 hover:border-white/50 shadow-xl transition-all duration-300 rounded-xl font-semibold"
-              >
-                Ver Demo <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </div>
@@ -116,9 +107,17 @@ const Landing = () => {
         </div>
       </div>
 
-      {/* CTA Section - Fondo Azul UTN */}
-      <div className="bg-gradient-to-r from-utn-blue to-utn-blue/90 py-12 sm:py-20">
-        <div className="container mx-auto px-4 text-center">
+      {/* CTA Section - Same style as hero */}
+      <div className="relative overflow-hidden">
+        {/* Same gradient as hero section */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-700 via-purple-800 to-indigo-900" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/30 via-pink-500/20 to-cyan-400/30" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-green-400/20 via-transparent to-blue-600/30" />
+        
+        {/* Grain texture overlay */}
+        <div className="absolute inset-0 opacity-20 bg-noise" />
+
+        <div className="relative z-10 container mx-auto px-4 py-12 sm:py-20 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4">
             ¿Listo para organizar tu carrera?
           </h2>
@@ -130,7 +129,7 @@ const Landing = () => {
             onClick={handleStartPlanning}
             variant="secondary"
             size="lg"
-            className="text-lg px-8 py-6 bg-white text-utn-blue hover:bg-white/90 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="text-lg px-8 py-6 bg-white text-gray-900 hover:bg-white/90 shadow-lg hover:shadow-xl transition-all duration-300"
           >
             Explorar el Mapa de Materias
           </Button>
