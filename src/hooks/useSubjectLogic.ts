@@ -137,9 +137,15 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
 
+    // Si ya hay prerrequisitos resaltados, limpiarlos
+    if (highlightedPrereqs.length > 0) {
+      setHighlightedPrereqs([]);
+      return;
+    }
+
     const prereqIds = [...subject.correlativasRegular, ...subject.correlativasAprobada];
     setHighlightedPrereqs(prereqIds);
-  }, [subjects]);
+  }, [subjects, highlightedPrereqs]);
 
   // Ciclar entre estados disponibles al hacer clic
   const cycleSubjectStatus = useCallback((subjectId: number) => {
