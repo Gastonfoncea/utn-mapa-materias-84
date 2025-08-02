@@ -117,6 +117,12 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
 
+    // Si ya hay prerrequisitos resaltados, limpiarlos
+    if (highlightedPrereqs.length > 0) {
+      setHighlightedPrereqs([]);
+      return;
+    }
+
     const currentCount = specialSubjectClickCount[subjectId] || 0;
     const newCount = currentCount + 1;
     
@@ -132,7 +138,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       const renderPrereqs = subject.correlativasRendir.map(id => ({ id, type: 'approved' as const }));
       setHighlightedPrereqs(renderPrereqs);
     }
-  }, [subjects, specialSubjectClickCount]);
+  }, [subjects, specialSubjectClickCount, highlightedPrereqs]);
 
   // Manejar click en materias no disponibles
   const handleLockedSubjectClick = useCallback((subjectId: number) => {
