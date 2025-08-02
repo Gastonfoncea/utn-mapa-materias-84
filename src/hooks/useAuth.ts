@@ -34,25 +34,6 @@ export function useAuth() {
     if (error) console.error('Error signing in with Google:', error)
   }
 
-  const signInWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-    return { error }
-  }
-
-  const signUpWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/mapa`
-      }
-    })
-    return { error }
-  }
-
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) console.error('Error signing out:', error)
@@ -62,8 +43,6 @@ export function useAuth() {
     user,
     loading,
     signInWithGoogle,
-    signInWithEmail,
-    signUpWithEmail,
     signOut
   }
 }

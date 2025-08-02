@@ -15,16 +15,12 @@ import SubjectNode, { SubjectStatus } from '@/components/SubjectNode';
 import { ControlPanel } from '@/components/ControlPanel';
 import { subjects, edges } from '@/data/subjects';
 import { useSubjectLogic } from '@/hooks/useSubjectLogic';
-import { AuthGuard } from '@/components/AuthGuard';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
 
 const nodeTypes = {
   subject: SubjectNode,
 };
 
 const MapaConceptual = () => {
-  const { user, signOut } = useAuth();
   const { 
     subjects: currentSubjects, 
     cycleSubjectStatus,
@@ -100,18 +96,7 @@ const MapaConceptual = () => {
 
 
   return (
-    <AuthGuard>
-      <div className="w-full h-screen bg-gradient-to-br from-utn-blue-light to-background relative overflow-hidden">
-        <div className="absolute top-4 right-4 z-10 flex items-center gap-4">
-          {user && (
-            <div className="flex items-center gap-2 text-white bg-black/20 backdrop-blur-sm rounded-lg px-3 py-2">
-              <span>Hola, {user.user_metadata?.full_name || user.email}</span>
-              <Button onClick={signOut} variant="outline" size="sm">
-                Cerrar Sesión
-              </Button>
-            </div>
-          )}
-        </div>
+    <div className="w-full h-screen bg-gradient-to-br from-utn-blue-light to-background relative overflow-hidden">
         <ControlPanel 
           onResetAll={resetAllSubjects}
           stats={stats}
@@ -171,7 +156,6 @@ const MapaConceptual = () => {
         />
       </ReactFlow>
     </div>
-    </AuthGuard>
   );
 };
 
