@@ -106,7 +106,7 @@ const MapaConceptual = () => {
         preventScrolling={true}
         nodesDraggable={false}
         nodesConnectable={false}
-        elementsSelectable={false}
+        elementsSelectable={true}
       >
         <Background 
           gap={15} 

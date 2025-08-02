@@ -10,6 +10,8 @@ interface SubjectData {
   status: SubjectStatus;
   modalidad: string;
   electiva: boolean;
+  onClick?: () => void;
+  isHighlighted?: boolean;
 }
 
 interface SubjectNodeProps {
@@ -39,7 +41,7 @@ const statusText = {
   'elective-sufficient': 'Créditos suficientes'
 };
 
-function SubjectNode({ data, selected, onClick, isHighlighted }: SubjectNodeProps) {
+function SubjectNode({ data, selected }: SubjectNodeProps) {
   const isInteractive = data.status === 'available' || data.status === 'approved' || 
                        data.status === 'failed' || data.status === 'current' || data.status === 'regular';
 
@@ -52,9 +54,9 @@ function SubjectNode({ data, selected, onClick, isHighlighted }: SubjectNodeProp
         statusStyles[data.status],
         selected && 'ring-2 ring-primary ring-offset-2',
         !isInteractive && 'cursor-not-allowed',
-        isHighlighted && 'ring-4 ring-yellow-400 ring-opacity-75 animate-pulse'
+        data.isHighlighted && 'ring-4 ring-yellow-400 ring-opacity-75 animate-pulse'
       )}
-      onClick={onClick}
+      onClick={data.onClick}
     >
       <Handle
         type="target"
