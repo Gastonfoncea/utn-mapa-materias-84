@@ -25,6 +25,7 @@ const MapaConceptual = () => {
     subjects: currentSubjects, 
     cycleSubjectStatus,
     updateSubjectStatus,
+    handleSpecialAction,
     resetAllSubjects, 
     stats,
     highlightedPrereqs
@@ -43,6 +44,10 @@ const MapaConceptual = () => {
       electiva: subject.electiva,
       onClick: () => cycleSubjectStatus(subject.id),
       onStatusChange: (status: SubjectStatus) => updateSubjectStatus(subject.id, status),
+      onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
+        handleSpecialAction(subject.id, action);
+      },
+      isSpecial: subject.correlativasRendir.length > 0,
       isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
       highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
     },
@@ -66,13 +71,17 @@ const MapaConceptual = () => {
         electiva: subject.electiva,
         onClick: () => cycleSubjectStatus(subject.id),
         onStatusChange: (status: SubjectStatus) => updateSubjectStatus(subject.id, status),
+        onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
+          handleSpecialAction(subject.id, action);
+        },
+        isSpecial: subject.correlativasRendir.length > 0,
         isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
         highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
       },
       draggable: false,
     }));
     setNodes(updatedNodes);
-  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, highlightedPrereqs]);
+  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, highlightedPrereqs]);
 
   // Actualizar nodos cuando cambien los subjects
   React.useEffect(() => {

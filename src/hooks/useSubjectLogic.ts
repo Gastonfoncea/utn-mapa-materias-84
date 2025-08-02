@@ -222,10 +222,31 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     };
   }, [subjects, calculateElectiveCredits]);
 
+  // Manejar acciones especiales para materias con correlativas para rendir
+  const handleSpecialAction = useCallback((subjectId: number, action: 'cursar' | 'rendir' | 'normal') => {
+    const subject = subjects.find(s => s.id === subjectId);
+    if (!subject) return;
+
+    if (action === 'cursar') {
+      // Mostrar correlativas para cursar
+      const regularPrereqs = subject.correlativasRegular.map(id => ({ id, type: 'regular' as const }));
+      const approvedPrereqs = subject.correlativasAprobada.map(id => ({ id, type: 'approved' as const }));
+      setHighlightedPrereqs([...regularPrereqs, ...approvedPrereqs]);
+    } else if (action === 'rendir') {
+      // Mostrar correlativas para rendir
+      const renderPrereqs = subject.correlativasRendir.map(id => ({ id, type: 'approved' as const }));
+      setHighlightedPrereqs(renderPrereqs);
+    } else {
+      // Normal - limpiar highlights
+      setHighlightedPrereqs([]);
+    }
+  }, [subjects]);
+
   return {
     subjects,
     cycleSubjectStatus,
     updateSubjectStatus,
+    handleSpecialAction,
     resetAllSubjects,
     stats,
     highlightedPrereqs,
