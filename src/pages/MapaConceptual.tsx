@@ -15,15 +15,12 @@ import SubjectNode, { SubjectStatus } from '@/components/SubjectNode';
 import { ControlPanel } from '@/components/ControlPanel';
 import { subjects, edges } from '@/data/subjects';
 import { useSubjectLogic } from '@/hooks/useSubjectLogic';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
 
 const nodeTypes = {
   subject: SubjectNode,
 };
 
 const MapaConceptual = () => {
-  const { user, signInWithGoogle, signOut } = useAuth();
   const { 
     subjects: currentSubjects, 
     cycleSubjectStatus,
@@ -100,43 +97,10 @@ const MapaConceptual = () => {
 
   return (
     <div className="w-full h-screen bg-gradient-to-br from-utn-blue-light to-background relative overflow-hidden">
-      {/* Panel de autenticación */}
-      <div className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-3 shadow-lg">
-        {user ? (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <img 
-                src={user.user_metadata?.avatar_url || '/placeholder.svg'} 
-                alt="Avatar" 
-                className="w-8 h-8 rounded-full"
-              />
-              <span className="text-sm text-gray-700 font-medium">
-                {user.user_metadata?.full_name || user.email}
-              </span>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={signOut}
-              className="text-xs"
-            >
-              Cerrar Sesión
-            </Button>
-          </div>
-        ) : (
-          <Button 
-            onClick={signInWithGoogle}
-            className="text-sm bg-blue-600 hover:bg-blue-700"
-          >
-            Iniciar con Google
-          </Button>
-        )}
-      </div>
-
-      <ControlPanel 
-        onResetAll={resetAllSubjects}
-        stats={stats}
-      />
+        <ControlPanel 
+          onResetAll={resetAllSubjects}
+          stats={stats}
+        />
       
       <ReactFlow
         nodes={nodes}
