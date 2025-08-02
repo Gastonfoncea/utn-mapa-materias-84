@@ -24,6 +24,12 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				'utn-blue': 'hsl(var(--utn-blue))',
+				'utn-blue-light': 'hsl(var(--utn-blue-light))',
+				'academic-green': 'hsl(var(--academic-green))',
+				'academic-red': 'hsl(var(--academic-red))',
+				'academic-yellow': 'hsl(var(--academic-yellow))',
+				'academic-gray': 'hsl(var(--academic-gray))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
