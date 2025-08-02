@@ -109,7 +109,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       return updateSubjectStates(updated);
     });
-    setHighlightedPrereqs([]); // Limpiar highlights
+    setHighlightedPrereqs([]); // Limpiar highlights al cambiar estado
   }, [updateSubjectStates]);
 
   // Manejar click en materias especiales (Seminario y Proyecto Final)
@@ -167,11 +167,14 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       return;
     }
 
-    // Materias bloqueadas
+    // Materias bloqueadas (no especiales)
     if (subject.status === 'locked') {
       handleLockedSubjectClick(subjectId);
       return;
     }
+
+    // Limpiar highlights cuando se interactúa con materias normales
+    setHighlightedPrereqs([]);
 
     // Electivas con créditos suficientes (permitir cambiar estado si se quiere)
     if (subject.status === 'elective-sufficient') {
