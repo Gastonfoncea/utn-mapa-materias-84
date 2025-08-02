@@ -25,8 +25,8 @@ const MapaConceptual = () => {
     subjects: currentSubjects, 
     cycleSubjectStatus, 
     resetAllSubjects, 
-    simulateSemester, 
-    stats 
+    stats,
+    highlightedPrereqs
   } = useSubjectLogic(subjects);
 
   // Convertir subjects a nodes para react-flow
@@ -40,6 +40,8 @@ const MapaConceptual = () => {
       status: subject.status,
       modalidad: subject.modalidad,
       electiva: subject.electiva,
+      onClick: () => cycleSubjectStatus(subject.id),
+      isHighlighted: highlightedPrereqs.includes(subject.id)
     },
     draggable: false,
   }));
@@ -59,36 +61,33 @@ const MapaConceptual = () => {
         status: subject.status,
         modalidad: subject.modalidad,
         electiva: subject.electiva,
+        onClick: () => cycleSubjectStatus(subject.id),
+        isHighlighted: highlightedPrereqs.includes(subject.id)
       },
       draggable: false,
     }));
     setNodes(updatedNodes);
-  }, [currentSubjects, setNodes]);
+  }, [currentSubjects, setNodes, cycleSubjectStatus, highlightedPrereqs]);
 
   // Actualizar nodos cuando cambien los subjects
   React.useEffect(() => {
     updateNodes();
   }, [updateNodes]);
 
-  // Manejar clicks en nodos
-  const onNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
-    cycleSubjectStatus(parseInt(node.id));
-  }, [cycleSubjectStatus]);
 
   return (
     <div className="w-full h-screen bg-gradient-to-br from-utn-blue-light to-background relative overflow-hidden">
-      <ControlPanel
-        onResetAll={resetAllSubjects}
-        onSimulateSemester={simulateSemester}
-        stats={stats}
-      />
+        <ControlPanel 
+          onResetAll={resetAllSubjects}
+          stats={stats}
+        />
       
       <ReactFlow
         nodes={nodes}
         edges={flowEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onNodeClick={onNodeClick}
+        
         nodeTypes={nodeTypes}
         fitView
         fitViewOptions={{ 

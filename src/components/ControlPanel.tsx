@@ -1,15 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { RotateCcw, Play, GraduationCap, Menu, BarChart3 } from 'lucide-react';
+import { RotateCcw, GraduationCap, Menu, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 
 interface ControlPanelProps {
   onResetAll: () => void;
-  onSimulateSemester: () => void;
   stats: {
     approved: number;
     current: number;
+    regular: number;
     failed: number;
     available: number;
     locked: number;
@@ -17,7 +17,7 @@ interface ControlPanelProps {
   };
 }
 
-export function ControlPanel({ onResetAll, onSimulateSemester, stats }: ControlPanelProps) {
+export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
   const [open, setOpen] = useState(false);
   const progress = ((stats.approved / stats.total) * 100).toFixed(1);
 
@@ -63,6 +63,10 @@ export function ControlPanel({ onResetAll, onSimulateSemester, stats }: ControlP
               <span>Cursando ({stats.current})</span>
             </div>
             <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded bg-academic-blue flex-shrink-0"></div>
+              <span>Regular ({stats.regular})</span>
+            </div>
+            <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded bg-academic-red flex-shrink-0"></div>
               <span>Desaprobada ({stats.failed})</span>
             </div>
@@ -81,18 +85,7 @@ export function ControlPanel({ onResetAll, onSimulateSemester, stats }: ControlP
       {/* Controles principales */}
       <Card className="bg-white/95 backdrop-blur">
         <CardContent className="pt-4 space-y-3">
-          <Button 
-            onClick={() => {
-              onSimulateSemester();
-              setOpen(false);
-            }}
-            className="w-full text-sm h-11"
-            size="default"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Simular Cuatrimestre
-          </Button>
-          <Button 
+          <Button
             onClick={() => {
               onResetAll();
               setOpen(false);

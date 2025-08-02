@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { cn } from '@/lib/utils';
 
-export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked';
+export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked' | 'elective-sufficient';
 
 interface SubjectData {
   nombre: string;
@@ -15,6 +15,8 @@ interface SubjectData {
 interface SubjectNodeProps {
   data: SubjectData;
   selected?: boolean;
+  onClick?: () => void;
+  isHighlighted?: boolean;
 }
 
 const statusStyles = {
@@ -23,7 +25,8 @@ const statusStyles = {
   current: 'bg-academic-yellow text-gray-800 border-academic-yellow shadow-lg',
   regular: 'bg-academic-blue text-white border-academic-blue shadow-lg',
   available: 'bg-white text-foreground border-primary hover:border-utn-blue shadow-md',
-  locked: 'bg-academic-gray text-gray-600 border-academic-gray opacity-70'
+  locked: 'bg-academic-gray text-gray-600 border-academic-gray opacity-70',
+  'elective-sufficient': 'bg-purple-100 text-purple-800 border-purple-300 shadow-md'
 };
 
 const statusText = {
@@ -32,22 +35,27 @@ const statusText = {
   current: 'Cursando',
   regular: 'Regular',
   available: 'Disponible',
-  locked: 'No disponible'
+  locked: 'No disponible',
+  'elective-sufficient': 'Créditos suficientes'
 };
 
-function SubjectNode({ data, selected }: SubjectNodeProps) {
+function SubjectNode({ data, selected, onClick, isHighlighted }: SubjectNodeProps) {
   const isInteractive = data.status === 'available' || data.status === 'approved' || 
                        data.status === 'failed' || data.status === 'current' || data.status === 'regular';
 
   return (
-    <div className={cn(
-      'relative w-32 sm:w-36 md:min-w-[160px] md:max-w-[200px] p-2 sm:p-3 rounded-lg border-2 transition-all duration-200',
-      'text-xs sm:text-sm font-medium text-center cursor-pointer select-none',
-      'shadow-md hover:shadow-lg',
-      statusStyles[data.status],
-      selected && 'ring-2 ring-primary ring-offset-2',
-      !isInteractive && 'cursor-not-allowed'
-    )}>
+    <div 
+      className={cn(
+        'relative w-32 sm:w-36 md:min-w-[160px] md:max-w-[200px] p-2 sm:p-3 rounded-lg border-2 transition-all duration-200',
+        'text-xs sm:text-sm font-medium text-center cursor-pointer select-none',
+        'shadow-md hover:shadow-lg',
+        statusStyles[data.status],
+        selected && 'ring-2 ring-primary ring-offset-2',
+        !isInteractive && 'cursor-not-allowed',
+        isHighlighted && 'ring-4 ring-yellow-400 ring-opacity-75 animate-pulse'
+      )}
+      onClick={onClick}
+    >
       <Handle
         type="target"
         position={Position.Left}
