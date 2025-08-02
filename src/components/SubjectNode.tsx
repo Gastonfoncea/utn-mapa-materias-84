@@ -17,6 +17,7 @@ interface SubjectData {
   onSpecialAction?: (action: 'cursar' | 'rendir' | 'normal') => void;
   onClearHighlights?: () => void;
   isSpecial?: boolean;
+  canBeRendered?: boolean;
   isHighlighted?: boolean;
   highlightType?: 'regular' | 'approved';
 }
@@ -216,15 +217,17 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
               <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
               Para cursar
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleSpecialAction('rendir')}
-            >
-              <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
-              Para rendir
-            </Button>
+            {data.canBeRendered && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                onClick={() => handleSpecialAction('rendir')}
+              >
+                <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
+                Para rendir
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
