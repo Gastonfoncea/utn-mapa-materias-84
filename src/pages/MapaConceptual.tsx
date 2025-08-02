@@ -11,7 +11,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import SubjectNode from '@/components/SubjectNode';
+import SubjectNode, { SubjectStatus } from '@/components/SubjectNode';
 import { ControlPanel } from '@/components/ControlPanel';
 import { subjects, edges } from '@/data/subjects';
 import { useSubjectLogic } from '@/hooks/useSubjectLogic';
@@ -23,7 +23,8 @@ const nodeTypes = {
 const MapaConceptual = () => {
   const { 
     subjects: currentSubjects, 
-    cycleSubjectStatus, 
+    cycleSubjectStatus,
+    updateSubjectStatus,
     resetAllSubjects, 
     stats,
     highlightedPrereqs
@@ -41,6 +42,7 @@ const MapaConceptual = () => {
       modalidad: subject.modalidad,
       electiva: subject.electiva,
       onClick: () => cycleSubjectStatus(subject.id),
+      onStatusChange: (status: SubjectStatus) => updateSubjectStatus(subject.id, status),
       isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
       highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
     },
@@ -63,13 +65,14 @@ const MapaConceptual = () => {
         modalidad: subject.modalidad,
         electiva: subject.electiva,
         onClick: () => cycleSubjectStatus(subject.id),
+        onStatusChange: (status: SubjectStatus) => updateSubjectStatus(subject.id, status),
         isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
         highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
       },
       draggable: false,
     }));
     setNodes(updatedNodes);
-  }, [currentSubjects, setNodes, cycleSubjectStatus, highlightedPrereqs]);
+  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, highlightedPrereqs]);
 
   // Actualizar nodos cuando cambien los subjects
   React.useEffect(() => {

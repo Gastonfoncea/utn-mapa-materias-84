@@ -219,6 +219,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   return {
     subjects,
     cycleSubjectStatus,
+    updateSubjectStatus,
     resetAllSubjects,
     stats,
     highlightedPrereqs,
