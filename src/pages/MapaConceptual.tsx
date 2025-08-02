@@ -41,7 +41,8 @@ const MapaConceptual = () => {
       modalidad: subject.modalidad,
       electiva: subject.electiva,
       onClick: () => cycleSubjectStatus(subject.id),
-      isHighlighted: highlightedPrereqs.includes(subject.id)
+      isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
+      highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
     },
     draggable: false,
   }));
@@ -62,7 +63,8 @@ const MapaConceptual = () => {
         modalidad: subject.modalidad,
         electiva: subject.electiva,
         onClick: () => cycleSubjectStatus(subject.id),
-        isHighlighted: highlightedPrereqs.includes(subject.id)
+        isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
+        highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
       },
       draggable: false,
     }));

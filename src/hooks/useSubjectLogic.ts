@@ -11,7 +11,7 @@ interface ElectiveCredits {
 
 export function useSubjectLogic(initialSubjects: Subject[]) {
   const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
-  const [highlightedPrereqs, setHighlightedPrereqs] = useState<number[]>([]);
+  const [highlightedPrereqs, setHighlightedPrereqs] = useState<{id: number, type: 'regular' | 'approved'}[]>([]);
   const [specialSubjectClickCount, setSpecialSubjectClickCount] = useState<Record<number, number>>({});
 
   // Calcular créditos de electivas
@@ -124,11 +124,13 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
     if (newCount % 2 === 1) {
       // Primer click: mostrar correlativas para cursar
-      const prereqIds = [...subject.correlativasRegular, ...subject.correlativasAprobada];
-      setHighlightedPrereqs(prereqIds);
+      const regularPrereqs = subject.correlativasRegular.map(id => ({ id, type: 'regular' as const }));
+      const approvedPrereqs = subject.correlativasAprobada.map(id => ({ id, type: 'approved' as const }));
+      setHighlightedPrereqs([...regularPrereqs, ...approvedPrereqs]);
     } else {
       // Segundo click: mostrar correlativas para rendir
-      setHighlightedPrereqs(subject.correlativasRendir);
+      const renderPrereqs = subject.correlativasRendir.map(id => ({ id, type: 'approved' as const }));
+      setHighlightedPrereqs(renderPrereqs);
     }
   }, [subjects, specialSubjectClickCount]);
 
@@ -143,8 +145,9 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       return;
     }
 
-    const prereqIds = [...subject.correlativasRegular, ...subject.correlativasAprobada];
-    setHighlightedPrereqs(prereqIds);
+    const regularPrereqs = subject.correlativasRegular.map(id => ({ id, type: 'regular' as const }));
+    const approvedPrereqs = subject.correlativasAprobada.map(id => ({ id, type: 'approved' as const }));
+    setHighlightedPrereqs([...regularPrereqs, ...approvedPrereqs]);
   }, [subjects, highlightedPrereqs]);
 
   // Ciclar entre estados disponibles al hacer clic

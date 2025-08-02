@@ -12,6 +12,7 @@ interface SubjectData {
   electiva: boolean;
   onClick?: () => void;
   isHighlighted?: boolean;
+  highlightType?: 'regular' | 'approved';
 }
 
 interface SubjectNodeProps {
@@ -48,9 +49,9 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
   const getHighlightColor = () => {
     if (!data.isHighlighted) return '';
     
-    switch (data.status) {
+    switch (data.highlightType) {
       case 'approved':
-        return 'ring-4 ring-green-400 ring-opacity-75 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]';
+        return 'ring-4 ring-blue-400 ring-opacity-75 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]';
       case 'regular':
         return 'ring-4 ring-yellow-400 ring-opacity-75 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]';
       default:
