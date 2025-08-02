@@ -66,8 +66,8 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
-              <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full w-fit mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-green-600 dark:text-green-400" />
+              <div className="p-3 bg-gray-100 dark:bg-gray-900/20 rounded-full w-fit mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-gray-600 dark:text-gray-400" />
               </div>
               <h3 className="text-xl font-semibold mb-3 text-foreground">
                 Seguimiento Visual
@@ -79,8 +79,8 @@ const Landing = () => {
             </div>
             
             <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
-              <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full w-fit mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <div className="p-3 bg-gray-100 dark:bg-gray-900/20 rounded-full w-fit mx-auto mb-4">
+                <BookOpen className="w-8 h-8 text-gray-600 dark:text-gray-400" />
               </div>
               <h3 className="text-xl font-semibold mb-3 text-foreground">
                 Planificación Inteligente
@@ -92,8 +92,8 @@ const Landing = () => {
             </div>
             
             <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
-              <div className="p-3 bg-orange-100 dark:bg-orange-900/20 rounded-full w-fit mx-auto mb-4">
-                <Users className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+              <div className="p-3 bg-gray-100 dark:bg-gray-900/20 rounded-full w-fit mx-auto mb-4">
+                <Users className="w-8 h-8 text-gray-600 dark:text-gray-400" />
               </div>
               <h3 className="text-xl font-semibold mb-3 text-foreground">
                 Diseñado para UTN
