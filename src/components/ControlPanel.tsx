@@ -28,21 +28,31 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   
-  // Calcular progreso con lógica especial para electivas extras
+  // Calcular progreso basado solo en materias requeridas para el título
   const calculateProgress = () => {
-    if (stats.isIngeniero) {
-      return 100; // Una vez ingeniero, progreso al 100%
-    }
+    // Electivas aprobadas por nivel (limitadas a las requeridas)
+    const electivas3roAprobadas = Math.min(Math.floor(stats.electiveCredits.year3 / 4), 1); // Máximo 1
+    const electivas4toAprobadas = Math.min(Math.floor(stats.electiveCredits.year4 / 3), 2); // Máximo 2  
+    const electivas5toAprobadas = Math.min(Math.floor(stats.electiveCredits.year5 / 3), 4); // Máximo 4
     
-    // Calcular el total ajustado excluyendo electivas extras
-    const electiveExtras4to = Math.max(0, (stats.electiveCredits.year4 / 3) - 2); // A partir de la 3era electiva de 4to
-    const electiveExtras5to = Math.max(0, (stats.electiveCredits.year5 / 3) - 4); // A partir de la 5ta electiva de 5to
-    const totalExtras = electiveExtras4to + electiveExtras5to;
+    // Total de electivas requeridas aprobadas
+    const electivasRequeridisAprobadas = electivas3roAprobadas + electivas4toAprobadas + electivas5toAprobadas;
     
-    const adjustedTotal = stats.total - totalExtras;
-    const adjustedApproved = stats.approved - totalExtras;
+    // Materias obligatorias aprobadas = total aprobadas - todas las electivas aprobadas
+    const todasElectivasAprobadas = Math.floor(stats.electiveCredits.year3 / 4) + 
+                                   Math.floor(stats.electiveCredits.year4 / 3) + 
+                                   Math.floor(stats.electiveCredits.year5 / 3);
+    const materiasObligatoriasAprobadas = stats.approved - todasElectivasAprobadas;
     
-    return ((adjustedApproved / adjustedTotal) * 100).toFixed(1);
+    // Total requerido para el título: materias obligatorias (36) + electivas requeridas (7)
+    const materiasObligatoriasTotal = 36; // Total de materias no electivas
+    const electivasRequeridisTotal = 7; // 1 + 2 + 4
+    const totalRequerido = materiasObligatoriasTotal + electivasRequeridisTotal;
+    
+    // Total aprobado para el título
+    const totalAprobado = materiasObligatoriasAprobadas + electivasRequeridisAprobadas;
+    
+    return ((totalAprobado / totalRequerido) * 100).toFixed(1);
   };
   
   const progress = calculateProgress();
