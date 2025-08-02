@@ -19,6 +19,13 @@ All colors MUST be HSL.
     --academic-yellow: 45 90% 60%;
     --academic-gray: 220 10% 70%;
 
+    /* Futuristic gradient colors */
+    --gradient-purple: 260 95% 35%;
+    --gradient-magenta: 310 85% 45%;
+    --gradient-cyan: 190 95% 55%;
+    --gradient-emerald: 160 85% 45%;
+    --gradient-orange: 25 95% 55%;
+
     --card: 0 0% 100%;
     --card-foreground: 220 20% 15%;
 
