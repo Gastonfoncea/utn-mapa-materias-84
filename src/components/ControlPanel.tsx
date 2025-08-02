@@ -44,10 +44,10 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
                                    Math.floor(stats.electiveCredits.year5 / 3);
     const materiasObligatoriasAprobadas = stats.approved - todasElectivasAprobadas;
     
-    // Total requerido para el título: materias obligatorias (36) + electivas requeridas (7)
-    const materiasObligatoriasTotal = 36; // Total de materias no electivas
+    // Total requerido para el título: materias obligatorias (37) + electivas requeridas (7)
+    const materiasObligatoriasTotal = 37; // Total de materias no electivas (corregido de 36 a 37)
     const electivasRequeridisTotal = 7; // 1 + 2 + 4
-    const totalRequerido = materiasObligatoriasTotal + electivasRequeridisTotal;
+    const totalRequerido = materiasObligatoriasTotal + electivasRequeridisTotal; // = 44
     
     // Total aprobado para el título
     const totalAprobado = materiasObligatoriasAprobadas + electivasRequeridisAprobadas;
