@@ -10,7 +10,7 @@ export interface Subject {
   position: { x: number; y: number };
 }
 
-// Datos de materias de Ingeniería en Sistemas (UTN Córdoba) - Ejemplo
+// Datos de materias de Ingeniería en Sistemas (UTN Córdoba) - Ajustado para móvil
 export const subjects: Subject[] = [
   // 1er Año
   {
@@ -20,7 +20,7 @@ export const subjects: Subject[] = [
     code: 'AM1',
     status: 'available',
     prerequisites: [],
-    position: { x: 50, y: 50 }
+    position: { x: 20, y: 20 }
   },
   {
     id: 'alg1',
@@ -29,7 +29,7 @@ export const subjects: Subject[] = [
     code: 'AGA',
     status: 'available',
     prerequisites: [],
-    position: { x: 50, y: 200 }
+    position: { x: 20, y: 140 }
   },
   {
     id: 'sys1',
@@ -38,7 +38,7 @@ export const subjects: Subject[] = [
     code: 'SR',
     status: 'available',
     prerequisites: [],
-    position: { x: 50, y: 350 }
+    position: { x: 20, y: 260 }
   },
   {
     id: 'ing1',
@@ -47,7 +47,7 @@ export const subjects: Subject[] = [
     code: 'ING1',
     status: 'available',
     prerequisites: [],
-    position: { x: 50, y: 500 }
+    position: { x: 20, y: 380 }
   },
   {
     id: 'fis1',
@@ -56,7 +56,7 @@ export const subjects: Subject[] = [
     code: 'FIS1',
     status: 'available',
     prerequisites: [],
-    position: { x: 250, y: 50 }
+    position: { x: 180, y: 20 }
   },
   
   // 2do Año
@@ -67,7 +67,7 @@ export const subjects: Subject[] = [
     code: 'AM2',
     status: 'locked',
     prerequisites: ['mat1'],
-    position: { x: 450, y: 50 }
+    position: { x: 340, y: 20 }
   },
   {
     id: 'prog1',
@@ -76,7 +76,7 @@ export const subjects: Subject[] = [
     code: 'PROG1',
     status: 'locked',
     prerequisites: ['alg1'],
-    position: { x: 450, y: 200 }
+    position: { x: 340, y: 140 }
   },
   {
     id: 'fis2',
@@ -85,7 +85,7 @@ export const subjects: Subject[] = [
     code: 'FIS2',
     status: 'locked',
     prerequisites: ['fis1', 'mat1'],
-    position: { x: 450, y: 350 }
+    position: { x: 340, y: 260 }
   },
   {
     id: 'ing2',
@@ -94,7 +94,16 @@ export const subjects: Subject[] = [
     code: 'ING2',
     status: 'locked',
     prerequisites: ['ing1'],
-    position: { x: 450, y: 500 }
+    position: { x: 340, y: 380 }
+  },
+  {
+    id: 'quim1',
+    name: 'Química',
+    year: 2,
+    code: 'QUIM',
+    status: 'available',
+    prerequisites: [],
+    position: { x: 180, y: 140 }
   },
   
   // 3er Año
@@ -105,7 +114,7 @@ export const subjects: Subject[] = [
     code: 'PROG2',
     status: 'locked',
     prerequisites: ['prog1'],
-    position: { x: 850, y: 200 }
+    position: { x: 500, y: 140 }
   },
   {
     id: 'est1',
@@ -114,7 +123,7 @@ export const subjects: Subject[] = [
     code: 'EST',
     status: 'locked',
     prerequisites: ['mat2'],
-    position: { x: 850, y: 50 }
+    position: { x: 500, y: 20 }
   },
   {
     id: 'arq1',
@@ -123,7 +132,36 @@ export const subjects: Subject[] = [
     code: 'ARQ',
     status: 'locked',
     prerequisites: ['fis2'],
-    position: { x: 850, y: 350 }
+    position: { x: 500, y: 260 }
+  },
+  {
+    id: 'so1',
+    name: 'Sistemas Operativos',
+    year: 3,
+    code: 'SO',
+    status: 'locked',
+    prerequisites: ['prog2'],
+    position: { x: 660, y: 140 }
+  },
+  
+  // 4to Año
+  {
+    id: 'bd1',
+    name: 'Base de Datos',
+    year: 4,
+    code: 'BD',
+    status: 'locked',
+    prerequisites: ['prog2'],
+    position: { x: 660, y: 20 }
+  },
+  {
+    id: 'redes1',
+    name: 'Redes de Datos',
+    year: 4,
+    code: 'REDES',
+    status: 'locked',
+    prerequisites: ['arq1'],
+    position: { x: 660, y: 260 }
   }
 ];
 
@@ -143,5 +181,11 @@ export const edges = [
   // AM2 -> EST
   { id: 'e7', source: 'mat2', target: 'est1', type: 'smoothstep' },
   // FIS2 -> ARQ
-  { id: 'e8', source: 'fis2', target: 'arq1', type: 'smoothstep' }
+  { id: 'e8', source: 'fis2', target: 'arq1', type: 'smoothstep' },
+  // PROG2 -> SO
+  { id: 'e9', source: 'prog2', target: 'so1', type: 'smoothstep' },
+  // PROG2 -> BD
+  { id: 'e10', source: 'prog2', target: 'bd1', type: 'smoothstep' },
+  // ARQ -> REDES
+  { id: 'e11', source: 'arq1', target: 'redes1', type: 'smoothstep' }
 ];

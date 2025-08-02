@@ -74,7 +74,7 @@ const Index = () => {
   }, [cycleSubjectStatus]);
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-utn-blue-light to-background relative">
+    <div className="w-full h-screen bg-gradient-to-br from-utn-blue-light to-background relative overflow-hidden">
       <ControlPanel
         onResetAll={resetAllSubjects}
         onSimulateSemester={simulateSemester}
@@ -89,20 +89,37 @@ const Index = () => {
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
         fitView
-        fitViewOptions={{ padding: 100 }}
-        className="w-full h-full"
-        minZoom={0.3}
-        maxZoom={1.5}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+        fitViewOptions={{ 
+          padding: 20,
+          minZoom: 0.5,
+          maxZoom: 1.2 
+        }}
+        className="w-full h-full touch-pan-y"
+        minZoom={0.2}
+        maxZoom={1.8}
+        defaultViewport={{ x: 0, y: 0, zoom: 0.6 }}
+        panOnDrag={true}
+        zoomOnScroll={true}
+        zoomOnPinch={true}
+        panOnScroll={false}
+        preventScrolling={true}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        elementsSelectable={false}
       >
         <Background 
-          gap={20} 
-          size={1} 
+          gap={15} 
+          size={0.8} 
           color="#e0e7ff" 
         />
-        <Controls className="bg-white/80 backdrop-blur border-utn-blue" />
+        <Controls 
+          className="bg-white/90 backdrop-blur border-utn-blue !bottom-4 !right-4 !left-auto !top-auto" 
+          showZoom={true}
+          showFitView={true}
+          showInteractive={false}
+        />
         <MiniMap 
-          className="bg-white/80 backdrop-blur border border-utn-blue rounded-lg"
+          className="!hidden sm:!block bg-white/90 backdrop-blur border border-utn-blue rounded-lg !bottom-4 !left-4 !right-auto !top-auto !w-32 !h-24"
           maskColor="#f0f4f8"
           nodeColor={(node) => {
             const status = node.data?.status;

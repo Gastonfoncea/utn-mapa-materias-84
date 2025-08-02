@@ -38,8 +38,9 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
 
   return (
     <div className={cn(
-      'relative min-w-[160px] max-w-[200px] p-3 rounded-lg border-2 transition-all duration-200',
-      'text-sm font-medium text-center cursor-pointer select-none',
+      'relative w-32 sm:w-36 md:min-w-[160px] md:max-w-[200px] p-2 sm:p-3 rounded-lg border-2 transition-all duration-200',
+      'text-xs sm:text-sm font-medium text-center cursor-pointer select-none',
+      'shadow-md hover:shadow-lg',
       statusStyles[data.status],
       selected && 'ring-2 ring-primary ring-offset-2',
       !isInteractive && 'cursor-not-allowed'
@@ -47,17 +48,17 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       <Handle
         type="target"
         position={Position.Left}
-        className="w-3 h-3 bg-primary border-2 border-white"
+        className="w-2 h-2 sm:w-3 sm:h-3 bg-primary border-2 border-white"
       />
       
       <div className="space-y-1">
-        <div className="font-semibold text-xs leading-tight">
+        <div className="font-semibold text-[10px] sm:text-xs leading-tight line-clamp-2">
           {data.name}
         </div>
-        <div className="text-xs opacity-90">
+        <div className="text-[9px] sm:text-xs opacity-90">
           {data.year}° Año
         </div>
-        <div className="text-xs opacity-80">
+        <div className="text-[8px] sm:text-xs opacity-80 hidden sm:block">
           {statusText[data.status]}
         </div>
       </div>
@@ -65,7 +66,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       <Handle
         type="source"
         position={Position.Right}
-        className="w-3 h-3 bg-primary border-2 border-white"
+        className="w-2 h-2 sm:w-3 sm:h-3 bg-primary border-2 border-white"
       />
     </div>
   );

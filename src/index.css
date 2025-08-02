@@ -109,5 +109,20 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    /* Mejor scrolling en móvil */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Estilos para react-flow en móvil */
+  .react-flow {
+    touch-action: pan-x pan-y;
+  }
+
+  /* Mejores estilos para texto truncado */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
