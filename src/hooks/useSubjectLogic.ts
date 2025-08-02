@@ -214,6 +214,10 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     }, {} as Record<SubjectStatus, number>);
 
     const credits = calculateElectiveCredits(subjects);
+    
+    // Verificar si se cumple para Analista
+    const seminarioIntegrador = subjects.find(s => s.id === 99);
+    const isAnalista = seminarioIntegrador?.status === 'approved' && credits.year3 >= 4;
 
     return {
       approved: counts.approved || 0,
@@ -224,7 +228,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       locked: counts.locked || 0,
       'elective-sufficient': counts['elective-sufficient'] || 0,
       total: subjects.length,
-      electiveCredits: credits
+      electiveCredits: credits,
+      isAnalista
     };
   }, [subjects, calculateElectiveCredits]);
 
