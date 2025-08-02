@@ -46,7 +46,7 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
       </Card>
 
       {/* Leyenda compacta */}
-      <Card className="bg-white/95 backdrop-blur">
+      <Card className="bg-gray-50 backdrop-blur">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
@@ -64,7 +64,7 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
               <span>Cursando ({stats.current})</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-academic-blue flex-shrink-0"></div>
+              <div className="w-3 h-3 rounded bg-blue-700 flex-shrink-0"></div>
               <span>Regular ({stats.regular})</span>
             </div>
             <div className="flex items-center gap-2">
