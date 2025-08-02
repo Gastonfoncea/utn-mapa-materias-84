@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { GraduationCap, BookOpen, TrendingUp, Users, ArrowRight } from "lucide-react";
+import Header from "@/components/Header";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen">
+      <Header />
       {/* Hero Section - Cursor Style */}
       <div className="relative overflow-hidden">
         {/* Cursor-style gradient background */}
