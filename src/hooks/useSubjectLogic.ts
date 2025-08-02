@@ -1,6 +1,8 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Subject } from '@/data/subjects';
 import { SubjectStatus } from '@/components/SubjectNode';
+import { useAuth } from '@/hooks/useAuth';
+import { useSubjectDatabase } from '@/hooks/useSubjectDatabase';
 
 // Tipos para el manejo de créditos de electivas
 interface ElectiveCredits {
@@ -10,9 +12,13 @@ interface ElectiveCredits {
 }
 
 export function useSubjectLogic(initialSubjects: Subject[]) {
+  const { user } = useAuth();
+  const { loadSubjectStates, saveSubjectState, resetUserSubjectStates } = useSubjectDatabase();
+  
   const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
   const [highlightedPrereqs, setHighlightedPrereqs] = useState<{id: number, type: 'regular' | 'approved'}[]>([]);
   const [specialSubjectClickCount, setSpecialSubjectClickCount] = useState<Record<number, number>>({});
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Calcular créditos de electivas
   const calculateElectiveCredits = useCallback((allSubjects: Subject[]): ElectiveCredits => {
@@ -127,9 +133,14 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
         return subject;
       });
       
+      // Guardar en Supabase si el usuario está autenticado y ya se cargaron los datos
+      if (user && isLoaded) {
+        saveSubjectState(user.id, subjectId, newStatus);
+      }
+      
       return updateSubjectStates(updated);
     });
-  }, [updateSubjectStates]);
+  }, [updateSubjectStates, user, isLoaded, saveSubjectState]);
 
   // Manejar click en materias especiales (Seminario y Proyecto Final)
   const handleSpecialSubjectClick = useCallback((subjectId: number) => {
@@ -213,8 +224,46 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     updateSubjectStatus(subjectId, nextStatus);
   }, [subjects, updateSubjectStatus, handleLockedSubjectClick, highlightedPrereqs]);
 
+  // Cargar estados desde Supabase al inicializar
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (user && !isLoaded) {
+        const savedStates = await loadSubjectStates(user.id);
+        
+        if (savedStates) {
+          const subjectsWithSavedStates = initialSubjects.map(subject => ({
+            ...subject,
+            status: savedStates[subject.id] || 
+              (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0 ? 'available' : 'locked') as SubjectStatus
+          }));
+          
+          setSubjects(updateSubjectStates(subjectsWithSavedStates));
+        } else {
+          // Si no hay datos guardados, usar estados por defecto
+          const defaultSubjects = initialSubjects.map(subject => ({
+            ...subject,
+            status: (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0 ? 'available' : 'locked') as SubjectStatus
+          }));
+          setSubjects(updateSubjectStates(defaultSubjects));
+        }
+        
+        setIsLoaded(true);
+      } else if (!user && !isLoaded) {
+        // Usuario no autenticado, usar estados por defecto
+        const defaultSubjects = initialSubjects.map(subject => ({
+          ...subject,
+          status: (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0 ? 'available' : 'locked') as SubjectStatus
+        }));
+        setSubjects(updateSubjectStates(defaultSubjects));
+        setIsLoaded(true);
+      }
+    };
+
+    loadUserData();
+  }, [user, isLoaded, loadSubjectStates, initialSubjects, updateSubjectStates]);
+
   // Reiniciar todas las materias
-  const resetAllSubjects = useCallback(() => {
+  const resetAllSubjects = useCallback(async () => {
     const resetSubjects = initialSubjects.map(subject => ({
       ...subject,
       status: (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0 ? 'available' : 'locked') as SubjectStatus
@@ -222,7 +271,12 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     setSubjects(resetSubjects);
     setHighlightedPrereqs([]);
     setSpecialSubjectClickCount({});
-  }, [initialSubjects]);
+    
+    // Si el usuario está autenticado, resetear también en Supabase
+    if (user) {
+      await resetUserSubjectStates(user.id);
+    }
+  }, [initialSubjects, user, resetUserSubjectStates]);
 
 
   // Estadísticas
