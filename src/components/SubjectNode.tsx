@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { cn } from '@/lib/utils';
 
-export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'locked';
+export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked';
 
 interface SubjectData {
   nombre: string;
@@ -21,6 +21,7 @@ const statusStyles = {
   approved: 'bg-academic-green text-white border-academic-green shadow-lg',
   failed: 'bg-academic-red text-white border-academic-red shadow-lg',
   current: 'bg-academic-yellow text-gray-800 border-academic-yellow shadow-lg',
+  regular: 'bg-academic-blue text-white border-academic-blue shadow-lg',
   available: 'bg-white text-foreground border-primary hover:border-utn-blue shadow-md',
   locked: 'bg-academic-gray text-gray-600 border-academic-gray opacity-70'
 };
@@ -29,13 +30,14 @@ const statusText = {
   approved: 'Aprobada',
   failed: 'Desaprobada', 
   current: 'Cursando',
+  regular: 'Regular',
   available: 'Disponible',
   locked: 'No disponible'
 };
 
 function SubjectNode({ data, selected }: SubjectNodeProps) {
   const isInteractive = data.status === 'available' || data.status === 'approved' || 
-                       data.status === 'failed' || data.status === 'current';
+                       data.status === 'failed' || data.status === 'current' || data.status === 'regular';
 
   return (
     <div className={cn(

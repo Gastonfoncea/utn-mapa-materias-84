@@ -10,10 +10,10 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Si no tiene correlativas, está disponible
     if (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0) return true;
     
-    // Verificar correlativas regulares (deben estar aprobadas para cursar)
+    // Verificar correlativas regulares (deben estar regulares o aprobadas para cursar)
     const regularsMet = subject.correlativasRegular.every(prereqId => {
       const prereq = allSubjects.find(s => s.id === prereqId);
-      return prereq?.status === 'approved';
+      return prereq?.status === 'approved' || prereq?.status === 'regular';
     });
     
     // Verificar correlativas aprobadas (deben estar aprobadas para cursar)
@@ -28,7 +28,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   // Actualizar estados de materias basado en correlativas
   const updateSubjectStates = useCallback((updatedSubjects: Subject[]) => {
     return updatedSubjects.map(subject => {
-      if (subject.status === 'approved' || subject.status === 'failed' || subject.status === 'current') {
+      if (subject.status === 'approved' || subject.status === 'failed' || subject.status === 'current' || subject.status === 'regular') {
         return subject; // Mantener estados explícitos
       }
       
@@ -60,7 +60,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject || subject.status === 'locked') return;
 
-    const statusCycle: SubjectStatus[] = ['available', 'current', 'approved', 'failed'];
+    const statusCycle: SubjectStatus[] = ['available', 'current', 'regular', 'approved', 'failed'];
     const currentIndex = statusCycle.indexOf(subject.status);
     const nextIndex = (currentIndex + 1) % statusCycle.length;
     const nextStatus = statusCycle[nextIndex];
@@ -101,6 +101,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     return {
       approved: counts.approved || 0,
       current: counts.current || 0,
+      regular: counts.regular || 0,
       failed: counts.failed || 0,
       available: counts.available || 0,
       locked: counts.locked || 0,
