@@ -26,6 +26,7 @@ const MapaConceptual = () => {
     cycleSubjectStatus,
     updateSubjectStatus,
     handleSpecialAction,
+    clearHighlights,
     resetAllSubjects, 
     stats,
     highlightedPrereqs
@@ -47,6 +48,7 @@ const MapaConceptual = () => {
       onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
         handleSpecialAction(subject.id, action);
       },
+      onClearHighlights: clearHighlights,
       isSpecial: subject.correlativasRendir.length > 0,
       isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
       highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
@@ -74,6 +76,7 @@ const MapaConceptual = () => {
         onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
           handleSpecialAction(subject.id, action);
         },
+        onClearHighlights: clearHighlights,
         isSpecial: subject.correlativasRendir.length > 0,
         isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
         highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
@@ -81,7 +84,7 @@ const MapaConceptual = () => {
       draggable: false,
     }));
     setNodes(updatedNodes);
-  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, highlightedPrereqs]);
+  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, clearHighlights, highlightedPrereqs]);
 
   // Actualizar nodos cuando cambien los subjects
   React.useEffect(() => {

@@ -249,11 +249,17 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Si action === 'normal', los highlights ya se limpiaron arriba
   }, [subjects]);
 
+  // Función para limpiar highlights solamente
+  const clearHighlights = useCallback(() => {
+    setHighlightedPrereqs([]);
+  }, []);
+
   return {
     subjects,
     cycleSubjectStatus,
     updateSubjectStatus,
     handleSpecialAction,
+    clearHighlights,
     resetAllSubjects,
     stats,
     highlightedPrereqs,

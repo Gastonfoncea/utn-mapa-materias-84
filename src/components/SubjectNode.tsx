@@ -15,6 +15,7 @@ interface SubjectData {
   onClick?: () => void;
   onStatusChange?: (status: SubjectStatus) => void;
   onSpecialAction?: (action: 'cursar' | 'rendir' | 'normal') => void;
+  onClearHighlights?: () => void;
   isSpecial?: boolean;
   isHighlighted?: boolean;
   highlightType?: 'regular' | 'approved';
@@ -90,9 +91,9 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
     
     // Materias interactivas que NO están bloqueadas - limpiar highlights y abrir popover
     if (isInteractive && data.status !== 'locked') {
-      // PRIMERO limpiar highlights antes de abrir el popover
-      if (data.onClick) {
-        data.onClick(); // Esto limpia los highlights
+      // PRIMERO limpiar highlights usando la función específica
+      if (data.onClearHighlights) {
+        data.onClearHighlights();
       }
       setPopoverOpen(true);
       return;
