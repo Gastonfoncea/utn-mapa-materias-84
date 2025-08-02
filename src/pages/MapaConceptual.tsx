@@ -31,14 +31,15 @@ const MapaConceptual = () => {
 
   // Convertir subjects a nodes para react-flow
   const initialNodes: Node[] = currentSubjects.map(subject => ({
-    id: subject.id,
+    id: subject.id.toString(),
     type: 'subject',
     position: subject.position,
     data: {
-      name: subject.name,
-      year: subject.year,
+      nombre: subject.nombre,
+      nivel: subject.nivel,
       status: subject.status,
-      code: subject.code,
+      modalidad: subject.modalidad,
+      electiva: subject.electiva,
     },
     draggable: false,
   }));
@@ -49,14 +50,15 @@ const MapaConceptual = () => {
   // Actualizar nodos cuando cambien los subjects
   const updateNodes = useCallback(() => {
     const updatedNodes = currentSubjects.map(subject => ({
-      id: subject.id,
+      id: subject.id.toString(),
       type: 'subject',
       position: subject.position,
       data: {
-        name: subject.name,
-        year: subject.year,
+        nombre: subject.nombre,
+        nivel: subject.nivel,
         status: subject.status,
-        code: subject.code,
+        modalidad: subject.modalidad,
+        electiva: subject.electiva,
       },
       draggable: false,
     }));
@@ -70,7 +72,7 @@ const MapaConceptual = () => {
 
   // Manejar clicks en nodos
   const onNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
-    cycleSubjectStatus(node.id);
+    cycleSubjectStatus(parseInt(node.id));
   }, [cycleSubjectStatus]);
 
   return (

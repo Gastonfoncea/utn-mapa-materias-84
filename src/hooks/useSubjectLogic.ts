@@ -7,12 +7,22 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
   // Función para verificar si una materia está habilitada
   const isSubjectAvailable = useCallback((subject: Subject, allSubjects: Subject[]) => {
-    if (subject.prerequisites.length === 0) return true;
+    // Si no tiene correlativas, está disponible
+    if (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0) return true;
     
-    return subject.prerequisites.every(prereqId => {
+    // Verificar correlativas regulares (deben estar aprobadas para cursar)
+    const regularsMet = subject.correlativasRegular.every(prereqId => {
       const prereq = allSubjects.find(s => s.id === prereqId);
       return prereq?.status === 'approved';
     });
+    
+    // Verificar correlativas aprobadas (deben estar aprobadas para cursar)
+    const approvedMet = subject.correlativasAprobada.every(prereqId => {
+      const prereq = allSubjects.find(s => s.id === prereqId);
+      return prereq?.status === 'approved';
+    });
+    
+    return regularsMet && approvedMet;
   }, []);
 
   // Actualizar estados de materias basado en correlativas
@@ -32,7 +42,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   }, [isSubjectAvailable]);
 
   // Cambiar estado de una materia
-  const updateSubjectStatus = useCallback((subjectId: string, newStatus: SubjectStatus) => {
+  const updateSubjectStatus = useCallback((subjectId: number, newStatus: SubjectStatus) => {
     setSubjects(prevSubjects => {
       const updated = prevSubjects.map(subject => {
         if (subject.id === subjectId) {
@@ -46,7 +56,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   }, [updateSubjectStates]);
 
   // Ciclar entre estados disponibles al hacer clic
-  const cycleSubjectStatus = useCallback((subjectId: string) => {
+  const cycleSubjectStatus = useCallback((subjectId: number) => {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject || subject.status === 'locked') return;
 
@@ -62,7 +72,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   const resetAllSubjects = useCallback(() => {
     const resetSubjects = initialSubjects.map(subject => ({
       ...subject,
-      status: (subject.prerequisites.length === 0 ? 'available' : 'locked') as SubjectStatus
+      status: (subject.correlativasRegular.length === 0 && subject.correlativasAprobada.length === 0 ? 'available' : 'locked') as SubjectStatus
     }));
     setSubjects(resetSubjects);
   }, [initialSubjects]);

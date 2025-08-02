@@ -5,10 +5,11 @@ import { cn } from '@/lib/utils';
 export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'locked';
 
 interface SubjectData {
-  name: string;
-  year: number;
+  nombre: string;
+  nivel: number;
   status: SubjectStatus;
-  code: string;
+  modalidad: string;
+  electiva: boolean;
 }
 
 interface SubjectNodeProps {
@@ -53,13 +54,13 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       
       <div className="space-y-1">
         <div className="font-semibold text-[10px] sm:text-xs leading-tight line-clamp-2">
-          {data.name}
+          {data.nombre}
         </div>
         <div className="text-[9px] sm:text-xs opacity-90">
-          {data.year}° Año
+          Nivel {data.nivel}
         </div>
         <div className="text-[8px] sm:text-xs opacity-80 hidden sm:block">
-          {statusText[data.status]}
+          {data.electiva ? 'Electiva' : statusText[data.status]}
         </div>
       </div>
 
