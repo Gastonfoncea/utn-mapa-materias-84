@@ -45,6 +45,19 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
   const isInteractive = data.status === 'available' || data.status === 'approved' || 
                        data.status === 'failed' || data.status === 'current' || data.status === 'regular';
 
+  const getHighlightColor = () => {
+    if (!data.isHighlighted) return '';
+    
+    switch (data.status) {
+      case 'approved':
+        return 'ring-4 ring-green-400 ring-opacity-75 animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_infinite]';
+      case 'regular':
+        return 'ring-4 ring-yellow-400 ring-opacity-75 animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_infinite]';
+      default:
+        return 'ring-4 ring-yellow-400 ring-opacity-75 animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_infinite]';
+    }
+  };
+
   return (
     <div 
       className={cn(
@@ -54,7 +67,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
         statusStyles[data.status],
         selected && 'ring-2 ring-primary ring-offset-2',
         !isInteractive && 'cursor-not-allowed',
-        data.isHighlighted && 'ring-4 ring-yellow-400 ring-opacity-75 animate-pulse'
+        getHighlightColor()
       )}
       onClick={data.onClick}
     >
