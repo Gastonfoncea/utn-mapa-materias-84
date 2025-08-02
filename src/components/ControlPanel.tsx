@@ -52,7 +52,9 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
     // Total aprobado para el título
     const totalAprobado = materiasObligatoriasAprobadas + electivasRequeridisAprobadas;
     
-    return ((totalAprobado / totalRequerido) * 100).toFixed(1);
+    // Limitar el porcentaje a máximo 100%
+    const percentage = Math.min((totalAprobado / totalRequerido) * 100, 100);
+    return percentage.toFixed(1);
   };
   
   const progress = calculateProgress();
