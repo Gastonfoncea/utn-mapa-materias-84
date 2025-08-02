@@ -19,6 +19,7 @@ interface ControlPanelProps {
     total: number;
     electiveCredits: { year3: number; year4: number; year5: number; };
     isAnalista: boolean;
+    isIngeniero: boolean;
   };
 }
 
@@ -96,11 +97,15 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
         <CardContent className="space-y-3">
           <div className="text-sm text-gray-600">
             Progreso: <span className="font-semibold text-utn-blue">{progress}%</span>
-            {stats.isAnalista && (
+            {stats.isIngeniero ? (
+              <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full font-medium">
+                Ingeniero
+              </span>
+            ) : stats.isAnalista ? (
               <span className="ml-2 text-xs bg-academic-green text-white px-2 py-1 rounded-full font-medium">
                 Analista
               </span>
-            )}
+            ) : null}
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div 

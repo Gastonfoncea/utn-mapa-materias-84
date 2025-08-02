@@ -79,13 +79,29 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       // Para electivas, verificar si ya se tienen suficientes créditos
       if (subject.electiva && subject.status !== 'elective-sufficient') {
+        // Backend de Aplicaciones (id: 201) no puede ser opcional
+        if (subject.id === 201) {
+          const available = isSubjectAvailable(subject, updatedSubjects);
+          return {
+            ...subject,
+            status: (available ? 'available' : 'locked') as SubjectStatus
+          };
+        }
+
         const hasEnoughCredits = 
           (subject.nivel === 3 && credits.year3 >= 4) ||
           (subject.nivel === 4 && credits.year4 >= 6) ||
           (subject.nivel === 5 && credits.year5 >= 10);
         
         if (hasEnoughCredits) {
-          return { ...subject, status: 'elective-sufficient' as SubjectStatus };
+          // Si ya se tienen suficientes créditos, cambiar automáticamente a opcional
+          return { ...subject, status: 'optional' as SubjectStatus };
+        }
+
+        // Si no se tienen suficientes créditos pero está disponible, mantener como elective-sufficient
+        const available = isSubjectAvailable(subject, updatedSubjects);
+        if (available && subject.status === 'locked') {
+          return { ...subject, status: 'available' as SubjectStatus };
         }
       }
       
@@ -218,9 +234,11 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
     const credits = calculateElectiveCredits(subjects);
     
-    // Verificar si se cumple para Analista
+    // Verificar si se cumple para Analista o Ingeniero
     const seminarioIntegrador = subjects.find(s => s.id === 99);
+    const proyectoFinal = subjects.find(s => s.id === 36);
     const isAnalista = seminarioIntegrador?.status === 'approved' && credits.year3 >= 4;
+    const isIngeniero = proyectoFinal?.status === 'approved' && credits.year4 >= 6 && credits.year5 >= 10;
 
     return {
       approved: counts.approved || 0,
@@ -233,7 +251,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       'optional': counts['optional'] || 0,
       total: subjects.length,
       electiveCredits: credits,
-      isAnalista
+      isAnalista,
+      isIngeniero
     };
   }, [subjects, calculateElectiveCredits]);
 
