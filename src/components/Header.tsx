@@ -29,8 +29,8 @@ const Header = () => {
             className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={handleLogoClick}
           >
-            <div className="p-2 bg-utn-blue/10 rounded-lg">
-              <GraduationCap className="w-8 h-8 text-utn-blue" />
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <GraduationCap className="w-8 h-8 text-gray-600" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-gray-900">Planificador UTN</h1>
