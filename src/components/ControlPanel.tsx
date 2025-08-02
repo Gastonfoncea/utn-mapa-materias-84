@@ -133,17 +133,31 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="text-sm text-gray-600">
-            Progreso: <span className="font-semibold text-utn-blue">{progress}%</span>
-            {stats.isIngeniero ? (
-              <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full font-medium">
-                Ingeniero
-              </span>
-            ) : stats.isAnalista ? (
-              <span className="ml-2 text-xs bg-academic-green text-white px-2 py-1 rounded-full font-medium">
-                Analista
-              </span>
-            ) : null}
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Progreso: <span className="font-semibold text-utn-blue">{progress}%</span>
+              {stats.isIngeniero ? (
+                <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full font-medium">
+                  Ingeniero
+                </span>
+              ) : stats.isAnalista ? (
+                <span className="ml-2 text-xs bg-academic-green text-white px-2 py-1 rounded-full font-medium">
+                  Analista
+                </span>
+              ) : null}
+            </div>
+            <Button
+              onClick={() => {
+                onResetAll();
+                setOpen(false);
+              }}
+              variant="outline"
+              size="sm"
+              className="h-8 px-3"
+            >
+              <RotateCcw className="w-3 h-3 mr-1" />
+              Reiniciar
+            </Button>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div 
@@ -222,23 +236,7 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
         </CardContent>
       </Card>
 
-      {/* Controles principales */}
-      <Card className="bg-white/95 backdrop-blur">
-        <CardContent className="pt-4 space-y-3">
-          <Button
-            onClick={() => {
-              onResetAll();
-              setOpen(false);
-            }}
-            variant="outline"
-            className="w-full text-sm h-11"
-            size="default"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reiniciar Todo
-          </Button>
-        </CardContent>
-      </Card>
+      {/* Controles principales - REMOVIDO, botón movido arriba */}
 
       {/* Instrucciones móvil */}
       <Card className="bg-white/95 backdrop-blur">
