@@ -88,6 +88,11 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
+    // Si la materia está permanentemente bloqueada, no hacer nada
+    if (data.isPermanentlyLocked) {
+      return;
+    }
+    
     // Si la materia está en estado regular, mostrar contador de oportunidades
     if (data.status === 'regular') {
       // PRIMERO limpiar highlights usando la función específica
