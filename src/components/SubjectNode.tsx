@@ -23,6 +23,7 @@ interface SubjectData {
   attempts?: number;
   onDecrementAttempts?: () => void;
   shouldFade?: boolean;
+  isPermanentlyLocked?: boolean;
 }
 
 interface SubjectNodeProps {
@@ -54,8 +55,8 @@ const statusText = {
 
 function SubjectNode({ data, selected }: SubjectNodeProps) {
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const isInteractive = data.status === 'available' || data.status === 'approved' || 
-                       data.status === 'current' || data.status === 'regular' || data.status === 'optional';
+  const isInteractive = !data.isPermanentlyLocked && (data.status === 'available' || data.status === 'approved' || 
+                       data.status === 'current' || data.status === 'regular' || data.status === 'optional');
 
   const getHighlightColor = () => {
     if (!data.isHighlighted) return '';
@@ -135,7 +136,8 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
             selected && 'ring-2 ring-primary ring-offset-2',
             !isInteractive && 'cursor-not-allowed',
             getHighlightColor(),
-            data.shouldFade && 'opacity-30'
+            data.shouldFade && 'opacity-30',
+            data.isPermanentlyLocked && 'ring-2 ring-green-600 ring-opacity-60'
           )}
           onClick={handleClick}
         >

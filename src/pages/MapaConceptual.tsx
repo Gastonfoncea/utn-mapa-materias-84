@@ -34,7 +34,9 @@ const MapaConceptual = () => {
     stats,
     highlightedPrereqs,
     isSubjectReadyToTest,
-    decrementAttempts
+    decrementAttempts,
+    permanentMode,
+    togglePermanentMode
   } = useSubjectLogic(subjects);
 
   // Convertir subjects a nodes para react-flow
@@ -65,7 +67,8 @@ const MapaConceptual = () => {
         highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type,
         attempts: subject.attempts,
         onDecrementAttempts: () => decrementAttempts(subject.id),
-        shouldFade: shouldFade
+        shouldFade: shouldFade,
+        isPermanentlyLocked: permanentMode && subject.status === 'approved'
       },
       draggable: false,
     };
@@ -103,13 +106,14 @@ const MapaConceptual = () => {
           highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type,
           attempts: subject.attempts,
           onDecrementAttempts: () => decrementAttempts(subject.id),
-          shouldFade: shouldFade
+          shouldFade: shouldFade,
+          isPermanentlyLocked: permanentMode && subject.status === 'approved'
         },
         draggable: false,
       };
     });
     setNodes(updatedNodes);
-  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, clearHighlights, highlightedPrereqs, isSubjectReadyToTest, decrementAttempts]);
+  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, clearHighlights, highlightedPrereqs, isSubjectReadyToTest, decrementAttempts, permanentMode]);
 
   // Actualizar nodos cuando cambien los subjects
   React.useEffect(() => {
@@ -159,6 +163,8 @@ const MapaConceptual = () => {
       <ControlPanel 
         onResetAll={resetAllSubjects}
         stats={stats}
+        permanentMode={permanentMode}
+        onTogglePermanentMode={togglePermanentMode}
       />
       
       <ReactFlow

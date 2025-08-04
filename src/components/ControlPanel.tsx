@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 
 interface ControlPanelProps {
   onResetAll: () => void;
+  permanentMode: boolean;
+  onTogglePermanentMode: () => void;
   stats: {
     approved: number;
     current: number;
@@ -23,7 +25,7 @@ interface ControlPanelProps {
   };
 }
 
-export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
+export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermanentMode }: ControlPanelProps) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   
@@ -203,6 +205,16 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
           <div className="flex items-center gap-2 text-xs">
             <div className="w-3 h-3 rounded bg-purple-200 border border-purple-400 flex-shrink-0"></div>
             <span>Opcional ({stats['optional']})</span>
+          </div>
+          <div className="mt-3 pt-2 border-t">
+            <Button
+              onClick={onTogglePermanentMode}
+              variant={permanentMode ? "default" : "outline"}
+              size="sm"
+              className="w-full text-xs h-8"
+            >
+              {permanentMode ? "Modo Permanente ON" : "Modo Permanente OFF"}
+            </Button>
           </div>
         </CardContent>
       </Card>

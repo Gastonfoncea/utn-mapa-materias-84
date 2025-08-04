@@ -19,6 +19,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   const [highlightedPrereqs, setHighlightedPrereqs] = useState<{id: number, type: 'regular' | 'approved'}[]>([]);
   const [specialSubjectClickCount, setSpecialSubjectClickCount] = useState<Record<number, number>>({});
   const [isLoaded, setIsLoaded] = useState(false);
+  const [permanentMode, setPermanentMode] = useState(false);
 
   // Cargar estado inicial desde Supabase cuando el usuario se autentica
   useEffect(() => {
@@ -151,6 +152,11 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     setSubjects(prevSubjects => {
       const updated = prevSubjects.map(subject => {
         if (subject.id === subjectId) {
+          // En modo permanente, no permitir cambiar materias ya aprobadas
+          if (permanentMode && subject.status === 'approved') {
+            return subject; // No cambiar el estado
+          }
+          
           const updatedSubject = { ...subject, status: newStatus };
           // Si cambia a regular, inicializar contador en 4
           if (newStatus === 'regular') {
@@ -174,7 +180,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       return finalSubjects;
     });
-  }, [updateSubjectStates, user, saveSubjectState]);
+  }, [updateSubjectStates, user, saveSubjectState, permanentMode]);
 
   // Manejar click en materias especiales (Seminario y Proyecto Final)
   const handleSpecialSubjectClick = useCallback((subjectId: number) => {
@@ -333,7 +339,22 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
         if (subject.id === subjectId && subject.status === 'regular' && subject.attempts) {
           const newAttempts = subject.attempts - 1;
           if (newAttempts <= 0) {
-            // Si se queda sin oportunidades, volver a disponible
+            // Si se queda sin oportunidades, volver a disponible solo si no hay materias dependientes aprobadas en modo permanente
+            if (permanentMode) {
+              // Verificar si hay materias que dependen de esta y están aprobadas
+              const dependentApprovedSubjects = prevSubjects.filter(s => 
+                s.status === 'approved' && 
+                (s.correlativasRegular.includes(subject.id) || 
+                 s.correlativasAprobada.includes(subject.id) || 
+                 s.correlativasRendir.includes(subject.id))
+              );
+              
+              if (dependentApprovedSubjects.length > 0) {
+                // No cambiar el estado, mantener como regular sin intentos
+                return { ...subject, attempts: 0 };
+              }
+            }
+            // Si no hay materias dependientes aprobadas o no está en modo permanente, volver a disponible
             return { ...subject, status: 'available' as SubjectStatus, attempts: undefined };
           }
           return { ...subject, attempts: newAttempts };
@@ -351,7 +372,12 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       return updated;
     });
-  }, [user, saveSubjectState]);
+  }, [user, saveSubjectState, permanentMode]);
+
+  // Función para alternar modo permanente
+  const togglePermanentMode = useCallback(() => {
+    setPermanentMode(prev => !prev);
+  }, []);
 
   // Función para limpiar highlights solamente
   const clearHighlights = useCallback(() => {
@@ -368,6 +394,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     stats,
     highlightedPrereqs,
     isSubjectReadyToTest,
-    decrementAttempts
+    decrementAttempts,
+    permanentMode,
+    togglePermanentMode
   };
 }
