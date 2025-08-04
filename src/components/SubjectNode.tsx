@@ -61,11 +61,11 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
     
     switch (data.highlightType) {
       case 'approved':
-        return 'ring-4 ring-blue-400 ring-opacity-75 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]';
+        return 'ring-4 ring-green-400 ring-opacity-75';
       case 'regular':
-        return 'ring-4 ring-yellow-400 ring-opacity-75 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]';
+        return 'ring-4 ring-yellow-400 ring-opacity-75';
       default:
-        return 'ring-4 ring-yellow-400 ring-opacity-75 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]';
+        return 'ring-4 ring-yellow-400 ring-opacity-75';
     }
   };
 
@@ -96,8 +96,8 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       return;
     }
     
-    // Materias especiales bloqueadas - abrir popover especial únicamente
-    if (data.status === 'locked' && data.isSpecial) {
+    // Si la materia está bloqueada (especiales o normales), mostrar menú específico
+    if (data.status === 'locked') {
       // PRIMERO limpiar highlights usando la función específica
       if (data.onClearHighlights) {
         data.onClearHighlights();
@@ -106,8 +106,8 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       return;
     }
     
-    // Materias interactivas que NO están bloqueadas - limpiar highlights y abrir popover
-    if (isInteractive && data.status !== 'locked') {
+    // Materias interactivas que NO están bloqueadas ni en regular - limpiar highlights y abrir popover
+    if ((data.status === 'available' || data.status === 'approved' || data.status === 'current' || data.status === 'optional')) {
       // PRIMERO limpiar highlights usando la función específica
       if (data.onClearHighlights) {
         data.onClearHighlights();
@@ -116,7 +116,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       return;
     }
     
-    // Para materias bloqueadas normales y no interactivas - usar onClick original
+    // Para materias no interactivas - usar onClick original
     if (data.onClick) {
       data.onClick();
     }
@@ -239,19 +239,21 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
             </div>
           </div>
         </PopoverContent>
-      ) : isInteractive && data.status !== 'locked' && (
+      ) : (data.status === 'available' || data.status === 'approved' || data.status === 'current' || data.status === 'optional') && (
         <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
           <div className="flex flex-col gap-1">
             {/* Menú normal para todas las materias cuando están disponibles */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleStatusSelect('available')}
-            >
-              <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
-              Disponible
-            </Button>
+            {data.status !== 'available' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                onClick={() => handleStatusSelect('available')}
+              >
+                <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
+                Disponible
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -261,7 +263,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
               <div className="w-3 h-3 rounded bg-blue-700 mr-2"></div>
               Regular
             </Button>
-            {data.canBeRendered && (
+            {data.canBeRendered && data.status !== 'approved' && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -272,16 +274,18 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
                 Aprobada
               </Button>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleStatusSelect('current')}
-            >
-              <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
-              Cursando
-            </Button>
-            {data.electiva && (
+            {data.status !== 'current' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                onClick={() => handleStatusSelect('current')}
+              >
+                <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
+                Cursando
+              </Button>
+            )}
+            {data.electiva && data.status !== 'optional' && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -296,37 +300,69 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
         </PopoverContent>
       )}
       
-      {data.status === 'locked' && data.isSpecial && (
+      {data.status === 'locked' && (
         <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
           <div className="flex flex-col gap-1">
-            {/* Menú especial solo para materias bloqueadas que son especiales */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleSpecialAction('cursar')}
-            >
-              <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
-              Para cursar
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleSpecialAction('rendir')}
-            >
-              <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
-              Para rendir
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleSpecialAction('normal')}
-            >
-              <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
-              Normal
-            </Button>
+            {data.isSpecial ? (
+              <>
+                {/* Menú especial solo para materias bloqueadas que son especiales */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                  onClick={() => handleSpecialAction('cursar')}
+                >
+                  <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
+                  Para cursar
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                  onClick={() => handleSpecialAction('rendir')}
+                >
+                  <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
+                  Para rendir
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                  onClick={() => handleSpecialAction('normal')}
+                >
+                  <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
+                  Normal
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* Menú para materias bloqueadas normales */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                  onClick={() => {
+                    if (data.onClick) data.onClick();
+                    setPopoverOpen(false);
+                  }}
+                >
+                  <div className="w-3 h-3 rounded bg-blue-400 mr-2"></div>
+                  Correlativas
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
+                  onClick={() => {
+                    if (data.onClearHighlights) data.onClearHighlights();
+                    setPopoverOpen(false);
+                  }}
+                >
+                  <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
+                  Normal
+                </Button>
+              </>
+            )}
           </div>
         </PopoverContent>
       )}
