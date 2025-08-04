@@ -22,6 +22,7 @@ interface SubjectData {
   highlightType?: 'regular' | 'approved';
   attempts?: number;
   onDecrementAttempts?: () => void;
+  shouldFade?: boolean;
 }
 
 interface SubjectNodeProps {
@@ -133,7 +134,8 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
             statusStyles[data.status],
             selected && 'ring-2 ring-primary ring-offset-2',
             !isInteractive && 'cursor-not-allowed',
-            getHighlightColor()
+            getHighlightColor(),
+            data.shouldFade && 'opacity-30'
           )}
           onClick={handleClick}
         >

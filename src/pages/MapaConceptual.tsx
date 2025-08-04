@@ -38,38 +38,12 @@ const MapaConceptual = () => {
   } = useSubjectLogic(subjects);
 
   // Convertir subjects a nodes para react-flow
-  const initialNodes: Node[] = currentSubjects.map(subject => ({
-    id: subject.id.toString(),
-    type: 'subject',
-    position: subject.position,
-    data: {
-      nombre: subject.nombre,
-      nivel: subject.nivel,
-      status: subject.status,
-      modalidad: subject.modalidad,
-      electiva: subject.electiva,
-      onClick: () => cycleSubjectStatus(subject.id),
-      onStatusChange: (status: SubjectStatus) => updateSubjectStatus(subject.id, status),
-      onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
-        handleSpecialAction(subject.id, action);
-      },
-      onClearHighlights: clearHighlights,
-      isSpecial: subject.correlativasRendir.length > 0,
-      canBeRendered: isSubjectReadyToTest(subject, currentSubjects),
-      isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
-      highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type,
-      attempts: subject.attempts,
-      onDecrementAttempts: () => decrementAttempts(subject.id)
-    },
-    draggable: false,
-  }));
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState(edges);
-
-  // Actualizar nodos cuando cambien los subjects
-  const updateNodes = useCallback(() => {
-    const updatedNodes = currentSubjects.map(subject => ({
+  const initialNodes: Node[] = currentSubjects.map(subject => {
+    const isHighlighted = highlightedPrereqs.some(prereq => prereq.id === subject.id);
+    const hasActiveHighlights = highlightedPrereqs.length > 0;
+    const shouldFade = hasActiveHighlights && !isHighlighted;
+    
+    return {
       id: subject.id.toString(),
       type: 'subject',
       position: subject.position,
@@ -87,15 +61,55 @@ const MapaConceptual = () => {
         onClearHighlights: clearHighlights,
         isSpecial: subject.correlativasRendir.length > 0,
         canBeRendered: isSubjectReadyToTest(subject, currentSubjects),
-        isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
+        isHighlighted: isHighlighted,
         highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type,
         attempts: subject.attempts,
-        onDecrementAttempts: () => decrementAttempts(subject.id)
+        onDecrementAttempts: () => decrementAttempts(subject.id),
+        shouldFade: shouldFade
       },
       draggable: false,
-    }));
+    };
+  });
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState(edges);
+
+  // Actualizar nodos cuando cambien los subjects
+  const updateNodes = useCallback(() => {
+    const updatedNodes = currentSubjects.map(subject => {
+      const isHighlighted = highlightedPrereqs.some(prereq => prereq.id === subject.id);
+      const hasActiveHighlights = highlightedPrereqs.length > 0;
+      const shouldFade = hasActiveHighlights && !isHighlighted;
+      
+      return {
+        id: subject.id.toString(),
+        type: 'subject',
+        position: subject.position,
+        data: {
+          nombre: subject.nombre,
+          nivel: subject.nivel,
+          status: subject.status,
+          modalidad: subject.modalidad,
+          electiva: subject.electiva,
+          onClick: () => cycleSubjectStatus(subject.id),
+          onStatusChange: (status: SubjectStatus) => updateSubjectStatus(subject.id, status),
+          onSpecialAction: (action: 'cursar' | 'rendir' | 'normal') => {
+            handleSpecialAction(subject.id, action);
+          },
+          onClearHighlights: clearHighlights,
+          isSpecial: subject.correlativasRendir.length > 0,
+          canBeRendered: isSubjectReadyToTest(subject, currentSubjects),
+          isHighlighted: isHighlighted,
+          highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type,
+          attempts: subject.attempts,
+          onDecrementAttempts: () => decrementAttempts(subject.id),
+          shouldFade: shouldFade
+        },
+        draggable: false,
+      };
+    });
     setNodes(updatedNodes);
-  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, clearHighlights, highlightedPrereqs, isSubjectReadyToTest]);
+  }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, clearHighlights, highlightedPrereqs, isSubjectReadyToTest, decrementAttempts]);
 
   // Actualizar nodos cuando cambien los subjects
   React.useEffect(() => {
