@@ -100,13 +100,47 @@ const MapaConceptual = () => {
 
   return (
     <div className="w-full h-screen bg-gradient-to-br from-utn-blue-light to-background relative overflow-hidden">
-      {/* Panel de control movido arriba a la derecha */}
-      <div className="absolute top-4 right-4 z-50">
-        <ControlPanel 
-          onResetAll={resetAllSubjects}
-          stats={stats}
-        />
+      {/* Panel de autenticación */}
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-4">
+        {loading ? (
+          <div className="text-sm text-white">Cargando...</div>
+        ) : user ? (
+          <div className="flex items-center gap-3 bg-white/90 backdrop-blur rounded-lg px-4 py-2">
+            <div className="flex items-center gap-2">
+              {user.user_metadata?.avatar_url && (
+                <img 
+                  src={user.user_metadata.avatar_url} 
+                  alt="Avatar" 
+                  className="w-6 h-6 rounded-full"
+                />
+              )}
+              <span className="text-sm font-medium text-foreground">
+                {user.user_metadata?.full_name || user.email}
+              </span>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={signOut}
+              className="text-xs"
+            >
+              Cerrar sesión
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            onClick={signInWithGoogle}
+            className="bg-white/90 backdrop-blur text-foreground hover:bg-white"
+          >
+            Iniciar sesión con Google
+          </Button>
+        )}
       </div>
+
+      <ControlPanel 
+        onResetAll={resetAllSubjects}
+        stats={stats}
+      />
       
       <ReactFlow
         nodes={nodes}
