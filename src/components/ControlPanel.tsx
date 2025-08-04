@@ -184,11 +184,11 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
               <span>Aprobada ({stats.approved})</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-academic-yellow flex-shrink-0"></div>
+              <div className="w-3 h-3 rounded bg-blue-700 flex-shrink-0"></div>
               <span>Cursando ({stats.current})</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-blue-700 flex-shrink-0"></div>
+              <div className="w-3 h-3 rounded bg-academic-yellow flex-shrink-0"></div>
               <span>Regular ({stats.regular})</span>
             </div>
             <div className="flex items-center gap-2">
