@@ -169,20 +169,20 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
       </PopoverTrigger>
       
       {data.status === 'regular' ? (
-        <PopoverContent className="w-64 p-3 bg-white z-50" align="center">
+        <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
           <div className="space-y-3">
-            <p className="text-sm font-medium text-foreground">Oportunidades para rendir final:</p>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-utn-blue mb-2">
+            <div className="text-center p-2 border-b">
+              <p className="text-sm font-medium text-foreground mb-1">Oportunidades restantes:</p>
+              <div className="text-xl font-bold text-utn-blue">
                 {data.attempts || 4}
               </div>
-              <p className="text-xs text-muted-foreground mb-3">
-                Oportunidades restantes
-              </p>
+            </div>
+            
+            <div className="flex flex-col gap-1">
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full text-xs mb-2"
+                className="justify-center h-8 px-3 text-xs border-red-300 text-red-600 hover:bg-red-50"
                 onClick={() => {
                   if (data.onDecrementAttempts) {
                     data.onDecrementAttempts();
@@ -193,20 +193,48 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
               >
                 Descontar oportunidad
               </Button>
-              <div className="space-y-1">
-                {Object.entries(statusText)
-                  .filter(([status]) => status !== data.status)
-                  .map(([status, text]) => (
-                    <Button
-                      key={status}
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-xs"
-                      onClick={() => handleStatusSelect(status as SubjectStatus)}
-                    >
-                      Cambiar a {text}
-                    </Button>
-                  ))}
+              
+              <div className="border-t pt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100 w-full"
+                  onClick={() => handleStatusSelect('available')}
+                >
+                  <div className="w-3 h-3 rounded bg-white border border-gray-300 mr-2"></div>
+                  Disponible
+                </Button>
+                {data.canBeRendered && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start h-8 px-3 text-xs hover:bg-gray-100 w-full"
+                    onClick={() => handleStatusSelect('approved')}
+                  >
+                    <div className="w-3 h-3 rounded bg-academic-green mr-2"></div>
+                    Aprobada
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start h-8 px-3 text-xs hover:bg-gray-100 w-full"
+                  onClick={() => handleStatusSelect('current')}
+                >
+                  <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
+                  Cursando
+                </Button>
+                {data.electiva && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start h-8 px-3 text-xs hover:bg-gray-100 w-full"
+                    onClick={() => handleStatusSelect('optional')}
+                  >
+                    <div className="w-3 h-3 rounded bg-purple-200 border border-purple-400 mr-2"></div>
+                    Opcional
+                  </Button>
+                )}
               </div>
             </div>
           </div>
