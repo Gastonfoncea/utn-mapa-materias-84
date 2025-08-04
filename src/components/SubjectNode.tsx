@@ -33,8 +33,8 @@ interface SubjectNodeProps {
 
 const statusStyles = {
   approved: 'bg-academic-green text-white border-academic-green shadow-lg',
-  current: 'bg-academic-yellow text-gray-800 border-academic-yellow shadow-lg',
-  regular: 'bg-blue-700 text-white border-blue-700 shadow-lg',
+  current: 'bg-blue-700 text-white border-blue-700 shadow-lg',
+  regular: 'bg-academic-yellow text-gray-800 border-academic-yellow shadow-lg',
   available: 'bg-white text-foreground border-primary hover:border-utn-blue shadow-md',
   locked: 'bg-gray-400 text-gray-700 border-gray-400 shadow-lg',
   'elective-sufficient': 'bg-purple-100 text-purple-800 border-purple-300 shadow-md',
@@ -221,7 +221,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
                   className="justify-start h-8 px-3 text-xs hover:bg-gray-100 w-full"
                   onClick={() => handleStatusSelect('current')}
                 >
-                  <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
+                  <div className="w-3 h-3 rounded bg-blue-700 mr-2"></div>
                   Cursando
                 </Button>
                 {data.electiva && (
@@ -260,7 +260,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
               className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
               onClick={() => handleStatusSelect('regular')}
             >
-              <div className="w-3 h-3 rounded bg-blue-700 mr-2"></div>
+              <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
               Regular
             </Button>
             {data.canBeRendered && data.status !== 'approved' && (
@@ -281,7 +281,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
                 className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
                 onClick={() => handleStatusSelect('current')}
               >
-                <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
+              <div className="w-3 h-3 rounded bg-blue-700 mr-2"></div>
                 Cursando
               </Button>
             )}
