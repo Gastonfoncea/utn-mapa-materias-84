@@ -151,7 +151,16 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     setSubjects(prevSubjects => {
       const updated = prevSubjects.map(subject => {
         if (subject.id === subjectId) {
-          return { ...subject, status: newStatus };
+          const updatedSubject = { ...subject, status: newStatus };
+          // Si cambia a regular, inicializar contador en 4
+          if (newStatus === 'regular') {
+            updatedSubject.attempts = 4;
+          }
+          // Si cambia de regular a otro estado, limpiar contador
+          if (subject.status === 'regular' && newStatus !== 'regular') {
+            updatedSubject.attempts = undefined;
+          }
+          return updatedSubject;
         }
         return subject;
       });
@@ -317,6 +326,33 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Si action === 'normal', los highlights ya se limpiaron arriba
   }, [subjects]);
 
+  // Función para decrementar contador de oportunidades
+  const decrementAttempts = useCallback((subjectId: number) => {
+    setSubjects(prevSubjects => {
+      const updated = prevSubjects.map(subject => {
+        if (subject.id === subjectId && subject.status === 'regular' && subject.attempts) {
+          const newAttempts = subject.attempts - 1;
+          if (newAttempts <= 0) {
+            // Si se queda sin oportunidades, volver a disponible
+            return { ...subject, status: 'available' as SubjectStatus, attempts: undefined };
+          }
+          return { ...subject, attempts: newAttempts };
+        }
+        return subject;
+      });
+      
+      // Guardar en la base de datos si el usuario está autenticado
+      if (user) {
+        const subject = updated.find(s => s.id === subjectId);
+        if (subject) {
+          saveSubjectState(subjectId, subject.status);
+        }
+      }
+      
+      return updated;
+    });
+  }, [user, saveSubjectState]);
+
   // Función para limpiar highlights solamente
   const clearHighlights = useCallback(() => {
     setHighlightedPrereqs([]);
@@ -331,6 +367,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     resetAllSubjects,
     stats,
     highlightedPrereqs,
-    isSubjectReadyToTest
+    isSubjectReadyToTest,
+    decrementAttempts
   };
 }

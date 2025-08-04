@@ -12,6 +12,7 @@ export interface Subject {
   electiva: boolean;
   status: SubjectStatus;
   position: { x: number; y: number };
+  attempts?: number; // Contador de oportunidades para rendir final (solo para materias en estado "regular")
 }
 
 // Datos de materias de Ingeniería en Sistemas (UTN Córdoba)

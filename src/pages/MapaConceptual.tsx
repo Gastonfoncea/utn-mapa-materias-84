@@ -33,7 +33,8 @@ const MapaConceptual = () => {
     resetAllSubjects, 
     stats,
     highlightedPrereqs,
-    isSubjectReadyToTest
+    isSubjectReadyToTest,
+    decrementAttempts
   } = useSubjectLogic(subjects);
 
   // Convertir subjects a nodes para react-flow
@@ -56,7 +57,9 @@ const MapaConceptual = () => {
       isSpecial: subject.correlativasRendir.length > 0,
       canBeRendered: isSubjectReadyToTest(subject, currentSubjects),
       isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
-      highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
+      highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type,
+      attempts: subject.attempts,
+      onDecrementAttempts: () => decrementAttempts(subject.id)
     },
     draggable: false,
   }));
@@ -85,7 +88,9 @@ const MapaConceptual = () => {
         isSpecial: subject.correlativasRendir.length > 0,
         canBeRendered: isSubjectReadyToTest(subject, currentSubjects),
         isHighlighted: highlightedPrereqs.some(prereq => prereq.id === subject.id),
-        highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type
+        highlightType: highlightedPrereqs.find(prereq => prereq.id === subject.id)?.type,
+        attempts: subject.attempts,
+        onDecrementAttempts: () => decrementAttempts(subject.id)
       },
       draggable: false,
     }));
