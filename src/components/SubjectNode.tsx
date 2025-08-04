@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 
-export type SubjectStatus = 'available' | 'approved' | 'failed' | 'current' | 'regular' | 'locked' | 'elective-sufficient' | 'optional';
+export type SubjectStatus = 'available' | 'approved' | 'current' | 'regular' | 'locked' | 'elective-sufficient' | 'optional';
 
 interface SubjectData {
   nombre: string;
@@ -31,7 +31,6 @@ interface SubjectNodeProps {
 
 const statusStyles = {
   approved: 'bg-academic-green text-white border-academic-green shadow-lg',
-  failed: 'bg-academic-red text-white border-academic-red shadow-lg',
   current: 'bg-academic-yellow text-gray-800 border-academic-yellow shadow-lg',
   regular: 'bg-blue-700 text-white border-blue-700 shadow-lg',
   available: 'bg-white text-foreground border-primary hover:border-utn-blue shadow-md',
@@ -42,7 +41,6 @@ const statusStyles = {
 
 const statusText = {
   approved: 'Aprobada',
-  failed: 'Desaprobada', 
   current: 'Cursando',
   regular: 'Regular',
   available: 'Disponible',
@@ -54,7 +52,7 @@ const statusText = {
 function SubjectNode({ data, selected }: SubjectNodeProps) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const isInteractive = data.status === 'available' || data.status === 'approved' || 
-                       data.status === 'failed' || data.status === 'current' || data.status === 'regular' || data.status === 'optional';
+                       data.status === 'current' || data.status === 'regular' || data.status === 'optional';
 
   const getHighlightColor = () => {
     if (!data.isHighlighted) return '';
@@ -194,15 +192,6 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
             >
               <div className="w-3 h-3 rounded bg-academic-yellow mr-2"></div>
               Cursando
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
-              onClick={() => handleStatusSelect('failed')}
-            >
-              <div className="w-3 h-3 rounded bg-academic-red mr-2"></div>
-              Desaprobada
             </Button>
             {data.electiva && (
               <Button

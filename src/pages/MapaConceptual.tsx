@@ -187,7 +187,6 @@ const MapaConceptual = () => {
             const status = node.data?.status;
             switch (status) {
               case 'approved': return '#4ade80';
-              case 'failed': return '#ef4444';
               case 'current': return '#facc15';
               case 'available': return '#3b82f6';
               default: return '#9ca3af';

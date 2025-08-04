@@ -12,7 +12,6 @@ interface ControlPanelProps {
     approved: number;
     current: number;
     regular: number;
-    failed: number;
     available: number;
     locked: number;
     'elective-sufficient': number;
@@ -191,10 +190,6 @@ export function ControlPanel({ onResetAll, stats }: ControlPanelProps) {
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded bg-blue-700 flex-shrink-0"></div>
               <span>Regular ({stats.regular})</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-academic-red flex-shrink-0"></div>
-              <span>Desaprobada ({stats.failed})</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded bg-white border border-primary flex-shrink-0"></div>

@@ -102,7 +102,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     
     return updatedSubjects.map(subject => {
       // Mantener estados explícitos - agregar 'optional' a los estados que se mantienen
-      if (subject.status === 'approved' || subject.status === 'failed' || subject.status === 'current' || subject.status === 'regular' || subject.status === 'optional') {
+      if (subject.status === 'approved' || subject.status === 'current' || subject.status === 'regular' || subject.status === 'optional') {
         return subject; 
       }
       
@@ -240,8 +240,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
     // Ciclo normal de estados para materias disponibles
     const statusCycle: SubjectStatus[] = subject.electiva 
-      ? ['available', 'current', 'regular', 'approved', 'failed', 'optional']
-      : ['available', 'current', 'regular', 'approved', 'failed'];
+      ? ['available', 'current', 'regular', 'approved', 'optional']
+      : ['available', 'current', 'regular', 'approved'];
     const currentIndex = statusCycle.indexOf(subject.status);
     const nextIndex = (currentIndex + 1) % statusCycle.length;
     const nextStatus = statusCycle[nextIndex];
@@ -285,7 +285,6 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       approved: counts.approved || 0,
       current: counts.current || 0,
       regular: counts.regular || 0,
-      failed: counts.failed || 0,
       available: counts.available || 0,
       locked: counts.locked || 0,
       'elective-sufficient': counts['elective-sufficient'] || 0,
