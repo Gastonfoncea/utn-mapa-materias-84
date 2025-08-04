@@ -20,6 +20,8 @@ interface SubjectData {
   canBeRendered?: boolean;
   isHighlighted?: boolean;
   highlightType?: 'regular' | 'approved';
+  attempts?: number;
+  onDecrementAttempts?: () => void;
 }
 
 interface SubjectNodeProps {
@@ -84,6 +86,16 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
+    // Si la materia está en estado regular, mostrar contador de oportunidades
+    if (data.status === 'regular') {
+      // PRIMERO limpiar highlights usando la función específica
+      if (data.onClearHighlights) {
+        data.onClearHighlights();
+      }
+      setPopoverOpen(true);
+      return;
+    }
+    
     // Materias especiales bloqueadas - abrir popover especial únicamente
     if (data.status === 'locked' && data.isSpecial) {
       // PRIMERO limpiar highlights usando la función específica
@@ -137,6 +149,11 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
             </div>
             <div className="text-[9px] sm:text-xs opacity-90">
               Nivel {data.nivel}
+              {data.status === 'regular' && data.attempts && (
+                <span className="ml-1 px-1 bg-utn-blue/20 rounded text-utn-blue font-bold">
+                  {data.attempts}
+                </span>
+              )}
             </div>
             <div className="text-[8px] sm:text-xs opacity-80 hidden sm:block">
               {data.electiva ? 'Electiva' : statusText[data.status]}
@@ -151,7 +168,50 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
         </div>
       </PopoverTrigger>
       
-      {isInteractive && data.status !== 'locked' && (
+      {data.status === 'regular' ? (
+        <PopoverContent className="w-64 p-3 bg-white z-50" align="center">
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-foreground">Oportunidades para rendir final:</p>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-utn-blue mb-2">
+                {data.attempts || 4}
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                Oportunidades restantes
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs mb-2"
+                onClick={() => {
+                  if (data.onDecrementAttempts) {
+                    data.onDecrementAttempts();
+                  }
+                  setPopoverOpen(false);
+                }}
+                disabled={!data.attempts || data.attempts <= 0}
+              >
+                Descontar oportunidad
+              </Button>
+              <div className="space-y-1">
+                {Object.entries(statusText)
+                  .filter(([status]) => status !== data.status)
+                  .map(([status, text]) => (
+                    <Button
+                      key={status}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-xs"
+                      onClick={() => handleStatusSelect(status as SubjectStatus)}
+                    >
+                      Cambiar a {text}
+                    </Button>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </PopoverContent>
+      ) : isInteractive && data.status !== 'locked' && (
         <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
           <div className="flex flex-col gap-1">
             {/* Menú normal para todas las materias cuando están disponibles */}
