@@ -30,6 +30,7 @@ const MapaConceptual = () => {
     updateSubjectStatus,
     handleSpecialAction,
     clearHighlights,
+    activeSubjectId,
     resetAllSubjects, 
     stats,
     highlightedPrereqs,
@@ -42,8 +43,9 @@ const MapaConceptual = () => {
   // Convertir subjects a nodes para react-flow
   const initialNodes: Node[] = currentSubjects.map(subject => {
     const isHighlighted = highlightedPrereqs.some(prereq => prereq.id === subject.id);
+    const isActiveSubject = activeSubjectId === subject.id;
     const hasActiveHighlights = highlightedPrereqs.length > 0;
-    const shouldFade = hasActiveHighlights && !isHighlighted;
+    const shouldFade = hasActiveHighlights && !isHighlighted && !isActiveSubject;
     
     return {
       id: subject.id.toString(),
@@ -68,6 +70,7 @@ const MapaConceptual = () => {
         attempts: subject.attempts,
         onDecrementAttempts: () => decrementAttempts(subject.id),
         shouldFade: shouldFade,
+        isActiveSubject: isActiveSubject,
         isPermanentlyLocked: permanentMode && subject.status === 'approved'
       },
       draggable: false,
@@ -81,8 +84,9 @@ const MapaConceptual = () => {
   const updateNodes = useCallback(() => {
     const updatedNodes = currentSubjects.map(subject => {
       const isHighlighted = highlightedPrereqs.some(prereq => prereq.id === subject.id);
+      const isActiveSubject = activeSubjectId === subject.id;
       const hasActiveHighlights = highlightedPrereqs.length > 0;
-      const shouldFade = hasActiveHighlights && !isHighlighted;
+      const shouldFade = hasActiveHighlights && !isHighlighted && !isActiveSubject;
       
       return {
         id: subject.id.toString(),
@@ -107,6 +111,7 @@ const MapaConceptual = () => {
           attempts: subject.attempts,
           onDecrementAttempts: () => decrementAttempts(subject.id),
           shouldFade: shouldFade,
+          isActiveSubject: isActiveSubject,
           isPermanentlyLocked: permanentMode && subject.status === 'approved'
         },
         draggable: false,

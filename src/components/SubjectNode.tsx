@@ -23,6 +23,7 @@ interface SubjectData {
   attempts?: number;
   onDecrementAttempts?: () => void;
   shouldFade?: boolean;
+  isActiveSubject?: boolean;
   isPermanentlyLocked?: boolean;
 }
 
@@ -114,7 +115,17 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
     }
     
     // Materias interactivas que NO están bloqueadas ni en regular - limpiar highlights y abrir popover
-    if ((data.status === 'available' || data.status === 'approved' || data.status === 'current' || data.status === 'optional')) {
+    if ((data.status === 'available' || data.status === 'current' || data.status === 'optional')) {
+      // PRIMERO limpiar highlights usando la función específica
+      if (data.onClearHighlights) {
+        data.onClearHighlights();
+      }
+      setPopoverOpen(true);
+      return;
+    }
+    
+    // Para materias aprobadas que NO están permanentemente bloqueadas
+    if (data.status === 'approved' && !data.isPermanentlyLocked) {
       // PRIMERO limpiar highlights usando la función específica
       if (data.onClearHighlights) {
         data.onClearHighlights();
@@ -142,6 +153,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
             !isInteractive && 'cursor-not-allowed',
             getHighlightColor(),
             data.shouldFade && 'opacity-30',
+            data.isActiveSubject && 'ring-2 ring-blue-500 ring-opacity-75',
             data.isPermanentlyLocked && 'ring-2 ring-green-600 ring-opacity-60'
           )}
           onClick={handleClick}
@@ -248,7 +260,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
             </div>
           </div>
         </PopoverContent>
-      ) : (data.status === 'available' || data.status === 'approved' || data.status === 'current' || data.status === 'optional') && (
+      ) : (data.status === 'available' || (data.status === 'approved' && !data.isPermanentlyLocked) || data.status === 'current' || data.status === 'optional') && (
         <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
           <div className="flex flex-col gap-1">
             {/* Menú normal para todas las materias cuando están disponibles */}

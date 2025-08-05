@@ -17,6 +17,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   
   const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
   const [highlightedPrereqs, setHighlightedPrereqs] = useState<{id: number, type: 'regular' | 'approved'}[]>([]);
+  const [activeSubjectId, setActiveSubjectId] = useState<number | null>(null);
   const [specialSubjectClickCount, setSpecialSubjectClickCount] = useState<Record<number, number>>({});
   const [isLoaded, setIsLoaded] = useState(false);
   const [permanentMode, setPermanentMode] = useState(false);
@@ -148,6 +149,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   const updateSubjectStatus = useCallback((subjectId: number, newStatus: SubjectStatus) => {
     // Limpiar highlights al cambiar cualquier estado
     setHighlightedPrereqs([]);
+    setActiveSubjectId(null);
     
     setSubjects(prevSubjects => {
       const updated = prevSubjects.map(subject => {
@@ -190,6 +192,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Si ya hay prerrequisitos resaltados, limpiarlos
     if (highlightedPrereqs.length > 0) {
       setHighlightedPrereqs([]);
+      setActiveSubjectId(null);
       return;
     }
 
@@ -203,10 +206,12 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       const regularPrereqs = subject.correlativasRegular.map(id => ({ id, type: 'regular' as const }));
       const approvedPrereqs = subject.correlativasAprobada.map(id => ({ id, type: 'approved' as const }));
       setHighlightedPrereqs([...regularPrereqs, ...approvedPrereqs]);
+      setActiveSubjectId(subjectId);
     } else {
       // Segundo click: mostrar correlativas para rendir
       const renderPrereqs = subject.correlativasRendir.map(id => ({ id, type: 'approved' as const }));
       setHighlightedPrereqs(renderPrereqs);
+      setActiveSubjectId(subjectId);
     }
   }, [subjects, specialSubjectClickCount, highlightedPrereqs]);
 
@@ -218,12 +223,14 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Si ya hay prerrequisitos resaltados, limpiarlos
     if (highlightedPrereqs.length > 0) {
       setHighlightedPrereqs([]);
+      setActiveSubjectId(null);
       return;
     }
 
     const regularPrereqs = subject.correlativasRegular.map(id => ({ id, type: 'regular' as const }));
     const approvedPrereqs = subject.correlativasAprobada.map(id => ({ id, type: 'approved' as const }));
     setHighlightedPrereqs([...regularPrereqs, ...approvedPrereqs]);
+    setActiveSubjectId(subjectId);
   }, [subjects, highlightedPrereqs]);
 
   // Ciclar entre estados disponibles al hacer clic
@@ -245,6 +252,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Limpiar highlights cuando se interactúa con materias normales
     if (highlightedPrereqs.length > 0) {
       setHighlightedPrereqs([]);
+      setActiveSubjectId(null);
     }
 
     // Electivas con créditos suficientes
@@ -272,6 +280,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     }));
     setSubjects(resetSubjects);
     setHighlightedPrereqs([]);
+    setActiveSubjectId(null);
     setSpecialSubjectClickCount({});
     
     // Resetear en Supabase si hay usuario autenticado
@@ -318,16 +327,19 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
     // Siempre limpiar highlights primero
     setHighlightedPrereqs([]);
+    setActiveSubjectId(null);
 
     if (action === 'cursar') {
       // Mostrar correlativas para cursar
       const regularPrereqs = subject.correlativasRegular.map(id => ({ id, type: 'regular' as const }));
       const approvedPrereqs = subject.correlativasAprobada.map(id => ({ id, type: 'approved' as const }));
       setHighlightedPrereqs([...regularPrereqs, ...approvedPrereqs]);
+      setActiveSubjectId(subjectId);
     } else if (action === 'rendir') {
       // Mostrar correlativas para rendir
       const renderPrereqs = subject.correlativasRendir.map(id => ({ id, type: 'approved' as const }));
       setHighlightedPrereqs(renderPrereqs);
+      setActiveSubjectId(subjectId);
     }
     // Si action === 'normal', los highlights ya se limpiaron arriba
   }, [subjects]);
@@ -382,6 +394,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   // Función para limpiar highlights solamente
   const clearHighlights = useCallback(() => {
     setHighlightedPrereqs([]);
+    setActiveSubjectId(null);
   }, []);
 
   return {
@@ -393,6 +406,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     resetAllSubjects,
     stats,
     highlightedPrereqs,
+    activeSubjectId,
     isSubjectReadyToTest,
     decrementAttempts,
     permanentMode,
