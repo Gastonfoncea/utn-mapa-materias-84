@@ -205,20 +205,6 @@ const MapaConceptual = () => {
           showFitView={true}
           showInteractive={false}
         />
-        <MiniMap 
-          className="!hidden sm:!block bg-white/90 backdrop-blur border border-utn-blue rounded-lg !bottom-4 !right-20 !left-auto !top-auto !w-32 !h-24"
-          maskColor="#f0f4f8"
-          nodeColor={(node) => {
-            const status = node.data?.status;
-            switch (status) {
-              case 'approved': return '#4ade80';
-              case 'current': return '#1d4ed8';
-              case 'regular': return '#facc15';
-              case 'available': return '#3b82f6';
-              default: return '#9ca3af';
-            }
-          }}
-        />
       </ReactFlow>
     </div>
   );

@@ -88,7 +88,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Si la materia está permanentemente bloqueada, no hacer nada
+    // Si la materia está permanentemente bloqueada (aprobada en modo permanente), no hacer nada
     if (data.isPermanentlyLocked) {
       return;
     }
