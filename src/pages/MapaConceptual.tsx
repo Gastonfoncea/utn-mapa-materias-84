@@ -12,6 +12,8 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import SubjectNode, { SubjectStatus } from '@/components/SubjectNode';
+import YearHeader from '@/components/YearHeader';
+import YearSeparator from '@/components/YearSeparator';
 import { ControlPanel } from '@/components/ControlPanel';
 import { subjects, edges } from '@/data/subjects';
 import { useSubjectLogic } from '@/hooks/useSubjectLogic';
@@ -20,6 +22,8 @@ import { Button } from '@/components/ui/button';
 
 const nodeTypes = {
   subject: SubjectNode,
+  yearHeader: YearHeader,
+  yearSeparator: YearSeparator,
 };
 
 const MapaConceptual = () => {
@@ -31,6 +35,8 @@ const MapaConceptual = () => {
     handleSpecialAction,
     clearHighlights,
     activeSubjectId,
+    approvedOrder,
+    regularOrder,
     resetAllSubjects, 
     stats,
     highlightedPrereqs,
@@ -39,6 +45,53 @@ const MapaConceptual = () => {
     permanentMode,
     togglePermanentMode
   } = useSubjectLogic(subjects);
+
+  // Crear nodos de títulos de año y separadores
+  const createYearNodes = () => {
+    const yearNodes: Node[] = [];
+    
+    // Títulos de año (posicionados arriba de cada columna)
+    const yearPositions = [
+      { year: 1, x: 100, y: -80 },
+      { year: 2, x: 300, y: -80 },
+      { year: 3, x: 500, y: -80 },
+      { year: 4, x: 700, y: -80 },
+      { year: 5, x: 900, y: -80 },
+    ];
+    
+    yearPositions.forEach(({ year, x, y }) => {
+      yearNodes.push({
+        id: `year-title-${year}`,
+        type: 'yearHeader',
+        position: { x, y },
+        data: { year },
+        draggable: false,
+        selectable: false,
+      });
+    });
+    
+    // Líneas verticales separando años (entre columnas)
+    const verticalSeparators = [
+      { x: 200, y: -60 },
+      { x: 400, y: -60 },
+      { x: 600, y: -60 },
+      { x: 800, y: -60 },
+    ];
+    
+    verticalSeparators.forEach((pos, index) => {
+      yearNodes.push({
+        id: `vertical-separator-${index}`,
+        type: 'yearSeparator',
+        position: pos,
+        data: { type: 'vertical' },
+        draggable: false,
+        selectable: false,
+        style: { width: '2px', height: '800px' },
+      });
+    });
+    
+    return yearNodes;
+  };
 
   // Convertir subjects a nodes para react-flow
   const initialNodes: Node[] = currentSubjects.map(subject => {
@@ -77,7 +130,10 @@ const MapaConceptual = () => {
     };
   });
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  // Combinar nodos de materias con nodos decorativos
+  const allInitialNodes = [...initialNodes, ...createYearNodes()];
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(allInitialNodes);
   const [flowEdges, setFlowEdges, onEdgesChange] = useEdgesState(edges);
 
   // Actualizar nodos cuando cambien los subjects
@@ -117,7 +173,10 @@ const MapaConceptual = () => {
         draggable: false,
       };
     });
-    setNodes(updatedNodes);
+    
+    // Combinar con nodos decorativos
+    const allNodes = [...updatedNodes, ...createYearNodes()];
+    setNodes(allNodes);
   }, [currentSubjects, setNodes, cycleSubjectStatus, updateSubjectStatus, handleSpecialAction, clearHighlights, highlightedPrereqs, isSubjectReadyToTest, decrementAttempts, permanentMode]);
 
   // Actualizar nodos cuando cambien los subjects
@@ -170,11 +229,14 @@ const MapaConceptual = () => {
         stats={stats}
         permanentMode={permanentMode}
         onTogglePermanentMode={togglePermanentMode}
+        subjects={currentSubjects}
+        approvedOrder={approvedOrder}
+        regularOrder={regularOrder}
       />
       
       <ReactFlow
         nodes={nodes}
-        edges={flowEdges}
+        edges={[]} // Eliminar todas las conexiones
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         

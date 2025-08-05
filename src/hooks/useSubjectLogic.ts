@@ -19,6 +19,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
   const [highlightedPrereqs, setHighlightedPrereqs] = useState<{id: number, type: 'regular' | 'approved'}[]>([]);
   const [activeSubjectId, setActiveSubjectId] = useState<number | null>(null);
   const [specialSubjectClickCount, setSpecialSubjectClickCount] = useState<Record<number, number>>({});
+  const [approvedOrder, setApprovedOrder] = useState<number[]>([]);
+  const [regularOrder, setRegularOrder] = useState<number[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [permanentMode, setPermanentMode] = useState(false);
 
@@ -159,6 +161,22 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
             return subject; // No cambiar el estado
           }
           
+          const previousStatus = subject.status;
+          
+          // Trackear orden de aprobación
+          if (newStatus === 'approved' && previousStatus !== 'approved') {
+            setApprovedOrder(prev => [...prev.filter(id => id !== subjectId), subjectId]);
+          } else if (previousStatus === 'approved' && newStatus !== 'approved' && !permanentMode) {
+            setApprovedOrder(prev => prev.filter(id => id !== subjectId));
+          }
+          
+          // Trackear orden de regulares
+          if (newStatus === 'regular' && previousStatus !== 'regular') {
+            setRegularOrder(prev => [...prev.filter(id => id !== subjectId), subjectId]);
+          } else if (previousStatus === 'regular' && newStatus !== 'regular') {
+            setRegularOrder(prev => prev.filter(id => id !== subjectId));
+          }
+          
           const updatedSubject = { ...subject, status: newStatus };
           // Si cambia a regular, inicializar contador en 4
           if (newStatus === 'regular') {
@@ -281,6 +299,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     setSubjects(resetSubjects);
     setHighlightedPrereqs([]);
     setActiveSubjectId(null);
+    setApprovedOrder([]);
+    setRegularOrder([]);
     setSpecialSubjectClickCount({});
     
     // Resetear en Supabase si hay usuario autenticado
@@ -407,6 +427,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     stats,
     highlightedPrereqs,
     activeSubjectId,
+    approvedOrder,
+    regularOrder,
     isSubjectReadyToTest,
     decrementAttempts,
     permanentMode,

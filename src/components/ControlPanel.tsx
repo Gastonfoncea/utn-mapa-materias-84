@@ -10,6 +10,9 @@ interface ControlPanelProps {
   onResetAll: () => void;
   permanentMode: boolean;
   onTogglePermanentMode: () => void;
+  subjects: any[];
+  approvedOrder: number[];
+  regularOrder: number[];
   stats: {
     approved: number;
     current: number;
@@ -25,7 +28,7 @@ interface ControlPanelProps {
   };
 }
 
-export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermanentMode }: ControlPanelProps) {
+export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermanentMode, subjects, approvedOrder, regularOrder }: ControlPanelProps) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   
@@ -84,6 +87,24 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
   const handleSignOut = () => {
     setUser(null);
     localStorage.removeItem('user');
+  };
+
+  
+  // Funciones helper para obtener listas de materias
+  const getApprovedSubjects = () => {
+    return approvedOrder.map(id => subjects.find(s => s.id === id)).filter(Boolean);
+  };
+  
+  const getRegularSubjects = () => {
+    return regularOrder.map(id => subjects.find(s => s.id === id)).filter(Boolean);
+  };
+  
+  const getAvailableSubjects = () => {
+    return subjects.filter(s => s.status === 'available').sort((a, b) => a.nivel - b.nivel || a.nombre.localeCompare(b.nombre));
+  };
+  
+  const getLockedSubjects = () => {
+    return subjects.filter(s => s.status === 'locked').sort((a, b) => a.nivel - b.nivel || a.nombre.localeCompare(b.nombre));
   };
 
   const PanelContent = () => (
@@ -244,6 +265,96 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
           </div>
         </CardContent>
       </Card>
+
+      {/* Listas de materias por estado */}
+      {getApprovedSubjects().length > 0 && (
+        <Card className="bg-green-50 backdrop-blur border-academic-green">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-academic-green">
+              <div className="w-3 h-3 rounded bg-academic-green"></div>
+              Materias Aprobadas ({getApprovedSubjects().length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1 text-xs">
+              {getApprovedSubjects().map((subject, index) => (
+                <div key={subject.id} className="flex justify-between items-center">
+                  <span>{index + 1}. {subject.nombre}</span>
+                  <span className="text-gray-500">Nivel {subject.nivel}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {getRegularSubjects().length > 0 && (
+        <Card className="bg-yellow-50 backdrop-blur border-academic-yellow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-yellow-700">
+              <div className="w-3 h-3 rounded bg-academic-yellow"></div>
+              Materias Regulares ({getRegularSubjects().length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1 text-xs">
+              {getRegularSubjects().map((subject, index) => (
+                <div key={subject.id} className="flex justify-between items-center">
+                  <span>{index + 1}. {subject.nombre}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500">Nivel {subject.nivel}</span>
+                    <span className="bg-yellow-200 px-1 rounded text-yellow-800 font-semibold">
+                      {subject.attempts || 4} intentos
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {getAvailableSubjects().length > 0 && (
+        <Card className="bg-blue-50 backdrop-blur border-primary">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-blue-700">
+              <div className="w-3 h-3 rounded bg-white border border-primary"></div>
+              Materias Disponibles ({getAvailableSubjects().length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1 text-xs max-h-32 overflow-y-auto">
+              {getAvailableSubjects().map((subject, index) => (
+                <div key={subject.id} className="flex justify-between items-center">
+                  <span>{index + 1}. {subject.nombre}</span>
+                  <span className="text-gray-500">Nivel {subject.nivel}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {getLockedSubjects().length > 0 && (
+        <Card className="bg-gray-50 backdrop-blur border-gray-400">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
+              <div className="w-3 h-3 rounded bg-gray-400"></div>
+              Materias No Disponibles ({getLockedSubjects().length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1 text-xs max-h-32 overflow-y-auto">
+              {getLockedSubjects().map((subject, index) => (
+                <div key={subject.id} className="flex justify-between items-center">
+                  <span>{index + 1}. {subject.nombre}</span>
+                  <span className="text-gray-500">Nivel {subject.nivel}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Controles principales - REMOVIDO, botón movido arriba */}
 
