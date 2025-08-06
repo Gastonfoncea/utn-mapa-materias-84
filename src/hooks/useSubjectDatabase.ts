@@ -10,6 +10,7 @@ export function useSubjectDatabase(userId: string | undefined) {
     if (!userId) return null
 
     try {
+      console.log('Cargando estados para usuario:', userId);
       const { data, error } = await supabase
         .from('estado_materias')
         .select('subject_id, status')
@@ -20,6 +21,7 @@ export function useSubjectDatabase(userId: string | undefined) {
         return null
       }
 
+      console.log('Datos cargados de BD:', data);
       const stateMap: Record<number, SubjectStatus> = {}
       data?.forEach(item => {
         stateMap[item.subject_id] = item.status as SubjectStatus
@@ -37,7 +39,8 @@ export function useSubjectDatabase(userId: string | undefined) {
     if (!userId) return
 
     try {
-      const { error } = await supabase
+      console.log('Guardando estado de materia:', { userId, subjectId, status });
+      const { data, error } = await supabase
         .from('estado_materias')
         .upsert({
           user_id: userId,
@@ -49,6 +52,8 @@ export function useSubjectDatabase(userId: string | undefined) {
 
       if (error) {
         console.error('Error al guardar estado de materia:', error)
+      } else {
+        console.log('Estado guardado exitosamente:', data);
       }
     } catch (error) {
       console.error('Error al guardar estado de materia:', error)
