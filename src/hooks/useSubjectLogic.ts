@@ -195,7 +195,10 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       // Guardar en Supabase si hay usuario autenticado
       if (user) {
-        saveSubjectState(subjectId, newStatus);
+        const updatedSubject = finalSubjects.find(s => s.id === subjectId);
+        if (updatedSubject) {
+          saveSubjectState(subjectId, updatedSubject.status);
+        }
       }
       
       return finalSubjects;

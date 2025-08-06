@@ -1,43 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
 import { BookOpen, Clock, GraduationCap, LogOut, Target, TrendingUp, Users } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
-      setUser(null);
-    }
-  }, []);
+  const { user, loading, signInWithGoogle, signOut } = useAuth();
 
   const handleStartPlanning = () => {
     navigate("/mapa");
-  };
-
-  const handleGoogleLoginSuccess = (credentialResponse) => {
-    if (credentialResponse.credential) {
-      const decoded = jwtDecode(credentialResponse.credential);
-      setUser(decoded);
-      localStorage.setItem('user', JSON.stringify(decoded));
-      navigate("/mapa");
-    }
-  };
-
-  const handleGoogleLoginError = () => {
-    // Optionally show a toast or error message
-  };
-
-  const handleSignOut = () => {
-    setUser(null);
-    localStorage.removeItem('user');
   };
 
   return (
@@ -79,7 +50,7 @@ const Landing = () => {
             {user && (
               <div className="mb-6">
                 <p className="text-2xl text-white/90 font-medium">
-                  ¡Hola, {user.name || user.given_name || user.family_name || user.email}!
+                  ¡Hola, {user.user_metadata?.full_name || user.email}!
                 </p>
               </div>
             )}
@@ -95,19 +66,20 @@ const Landing = () => {
                 Comenzar a Planificar
               </Button>
               
-              {!user && (
-                <div className="flex flex-col items-center">
-                  <GoogleLogin
-                    onSuccess={handleGoogleLoginSuccess}
-                    onError={handleGoogleLoginError}
-                    width="300"
-                  />
-                </div>
-              )}
-              
-              {user && (
+              {loading ? (
+                <div className="text-white">Cargando...</div>
+              ) : !user ? (
                 <Button 
-                  onClick={handleSignOut}
+                  onClick={signInWithGoogle}
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-6 py-6 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 hover:border-white/50 shadow-xl transition-all duration-300 rounded-xl font-semibold"
+                >
+                  Iniciar sesión con Google
+                </Button>
+              ) : (
+                <Button 
+                  onClick={signOut}
                   variant="outline"
                   size="lg"
                   className="text-lg px-6 py-6 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 hover:border-white/50 shadow-xl transition-all duration-300 rounded-xl font-semibold"
