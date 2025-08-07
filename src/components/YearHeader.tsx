@@ -8,7 +8,7 @@ interface YearHeaderProps {
 
 function YearHeader({ data }: YearHeaderProps) {
   return (
-    <div className="bg-utn-blue text-white px-4 py-2 rounded-lg shadow-md font-semibold text-center text-lg">
+    <div className="bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-md font-semibold text-center text-lg min-w-[120px]">
       {data.year}° Año
     </div>
   );

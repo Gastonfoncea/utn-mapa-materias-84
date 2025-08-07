@@ -52,11 +52,11 @@ const MapaConceptual = () => {
     
     // Títulos de año (posicionados arriba de cada columna)
     const yearPositions = [
-      { year: 1, x: 100, y: -80 },
-      { year: 2, x: 300, y: -80 },
-      { year: 3, x: 500, y: -80 },
-      { year: 4, x: 700, y: -80 },
-      { year: 5, x: 900, y: -80 },
+      { year: 1, x: 50, y: -80 },
+      { year: 2, x: 250, y: -80 },
+      { year: 3, x: 450, y: -80 },
+      { year: 4, x: 650, y: -80 },
+      { year: 5, x: 850, y: -80 },
     ];
     
     yearPositions.forEach(({ year, x, y }) => {
@@ -72,10 +72,10 @@ const MapaConceptual = () => {
     
     // Líneas verticales separando años (entre columnas)
     const verticalSeparators = [
-      { x: 200, y: -60 },
-      { x: 400, y: -60 },
-      { x: 600, y: -60 },
-      { x: 800, y: -60 },
+      { x: 175, y: -60 },
+      { x: 375, y: -60 },
+      { x: 575, y: -60 },
+      { x: 775, y: -60 },
     ];
     
     verticalSeparators.forEach((pos, index) => {

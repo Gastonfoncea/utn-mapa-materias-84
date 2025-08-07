@@ -110,9 +110,9 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
   const PanelContent = () => (
     <div className="space-y-4">
       {/* Tarjeta de autenticación */}
-      <Card className="bg-white/95 backdrop-blur border-utn-blue">
+      <Card className="bg-card/95 backdrop-blur border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-utn-blue flex items-center gap-2 text-base">
+          <CardTitle className="text-primary flex items-center gap-2 text-base">
             {user ? (
               <>
                 <GraduationCap className="w-5 h-5" />
@@ -149,17 +149,17 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
         </CardContent>
       </Card>
       {/* Header con progreso */}
-      <Card className="bg-white/95 backdrop-blur border-utn-blue">
+      <Card className="bg-card/95 backdrop-blur border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-utn-blue flex items-center gap-2 text-base">
+          <CardTitle className="text-primary flex items-center gap-2 text-base">
             <GraduationCap className="w-5 h-5" />
             UTN Córdoba
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              Progreso: <span className="font-semibold text-utn-blue">{progress}%</span>
+            <div className="text-sm text-muted-foreground">
+              Progreso: <span className="font-semibold text-primary">{progress}%</span>
               {stats.isIngeniero ? (
                 <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full font-medium">
                   Ingeniero
@@ -183,9 +183,9 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
               Reiniciar
             </Button>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
+          <div className="w-full bg-secondary rounded-full h-3">
             <div 
-              className="bg-utn-blue h-3 rounded-full transition-all duration-300"
+              className="bg-primary h-3 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
