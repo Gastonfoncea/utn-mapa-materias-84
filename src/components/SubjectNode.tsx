@@ -264,7 +264,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
         <PopoverContent className="w-auto p-2 bg-white z-50" align="center">
           <div className="flex flex-col gap-1">
             {/* Menú normal para todas las materias cuando están disponibles */}
-            {data.status !== 'available' && (
+            {data.status !== 'available' && !(data.electiva && data.status === 'optional') && (
               <Button
                 variant="ghost"
                 size="sm"

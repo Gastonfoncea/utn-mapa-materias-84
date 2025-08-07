@@ -278,7 +278,7 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-1 text-xs">
+            <div className="space-y-1 text-xs max-h-32 overflow-y-auto">
               {getApprovedSubjects().map((subject, index) => (
                 <div key={subject.id} className="flex justify-between items-center">
                   <span>{index + 1}. {subject.nombre}</span>
