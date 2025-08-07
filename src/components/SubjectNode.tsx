@@ -363,6 +363,12 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
                   size="sm"
                   className="justify-start h-8 px-3 text-xs hover:bg-gray-100"
                   onClick={() => {
+                    // Verificar si es la materia "Seguridad en el Desarrollo de Software"
+                    if (data.nombre.toLowerCase().includes('seguridad en el desarrollo de software')) {
+                      alert('Las correlatividades de esta materia son incorrectas');
+                      setPopoverOpen(false);
+                      return;
+                    }
                     if (data.onClick) data.onClick();
                     setPopoverOpen(false);
                   }}

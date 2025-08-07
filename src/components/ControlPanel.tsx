@@ -193,7 +193,7 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
       </Card>
 
       {/* Leyenda compacta */}
-      <Card className="bg-gray-50 backdrop-blur">
+      <Card className="bg-card/95 backdrop-blur border-border">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
@@ -214,10 +214,12 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
               <div className="w-3 h-3 rounded bg-academic-yellow flex-shrink-0"></div>
               <span>Regular ({stats.regular})</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-white border border-primary flex-shrink-0"></div>
-              <span>Disponible ({stats.available})</span>
-            </div>
+            {!(permanentMode && stats['optional'] > 0) && (
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-background border border-primary flex-shrink-0"></div>
+                <span>Disponible ({stats.available})</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2 text-xs">
             <div className="w-3 h-3 rounded bg-academic-gray flex-shrink-0"></div>
@@ -241,7 +243,7 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
       </Card>
 
       {/* Créditos de electivas */}
-      <Card className="bg-gray-50 backdrop-blur">
+      <Card className="bg-card/95 backdrop-blur border-border">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
@@ -314,7 +316,7 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
         </Card>
       )}
 
-      {getAvailableSubjects().length > 0 && (
+      {getAvailableSubjects().length > 0 && !(permanentMode && stats['optional'] > 0) && (
         <Card className="bg-blue-50 backdrop-blur border-primary">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2 text-blue-700">
@@ -336,19 +338,19 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
       )}
 
       {getLockedSubjects().length > 0 && (
-        <Card className="bg-gray-50 backdrop-blur border-gray-400">
+        <Card className="bg-muted/95 backdrop-blur border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
-              <div className="w-3 h-3 rounded bg-gray-400"></div>
+            <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
+              <div className="w-3 h-3 rounded bg-academic-gray"></div>
               Materias No Disponibles ({getLockedSubjects().length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1 text-xs max-h-32 overflow-y-auto">
-              {getLockedSubjects().map((subject, index) => (
-                <div key={subject.id} className="flex justify-between items-center">
-                  <span>{index + 1}. {subject.nombre}</span>
-                  <span className="text-gray-500">Nivel {subject.nivel}</span>
+               {getLockedSubjects().map((subject, index) => (
+                 <div key={subject.id} className="flex justify-between items-center">
+                   <span>{index + 1}. {subject.nombre}</span>
+                   <span className="text-muted-foreground">Nivel {subject.nivel}</span>
                 </div>
               ))}
             </div>
@@ -359,9 +361,9 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
       {/* Controles principales - REMOVIDO, botón movido arriba */}
 
       {/* Instrucciones móvil */}
-      <Card className="bg-white/95 backdrop-blur">
+      <Card className="bg-card/95 backdrop-blur border-border">
         <CardContent className="pt-4">
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             <strong>Instrucciones:</strong><br/>
             • Toca una materia para cambiar su estado<br/>
             • Las correlativas se actualizan automáticamente<br/>
@@ -376,7 +378,7 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
   return (
     <>
       {/* Desktop - Panel lateral */}
-      <div className="hidden md:block absolute top-4 left-4 z-10 max-w-xs">
+      <div className="hidden md:block absolute top-4 left-4 z-10 max-w-xs max-h-screen overflow-y-auto">
         <PanelContent />
       </div>
 
