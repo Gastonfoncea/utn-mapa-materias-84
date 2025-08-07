@@ -365,7 +365,7 @@ function SubjectNode({ data, selected }: SubjectNodeProps) {
                   onClick={() => {
                     // Verificar si es la materia "Seguridad en el Desarrollo de Software"
                     if (data.nombre.toLowerCase().includes('seguridad en el desarrollo de software')) {
-                      alert('Las correlatividades de esta materia son incorrectas');
+                      alert("Las correlatividades de esta materia son incorrectas. Las verdaderas son: Regular (Bases de Datos, Desarrollo de Software, Diseño de Sistemas), Aprobada(Sistemas y Procesos de Negocio, Sistemas Operativos)");
                       setPopoverOpen(false);
                       return;
                     }
