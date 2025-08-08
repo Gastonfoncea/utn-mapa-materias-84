@@ -22,7 +22,7 @@ interface ControlPanelProps {
     'elective-sufficient': number;
     'optional': number;
     total: number;
-    electiveCredits: { year3: number; year4: number; year5: number; };
+    electiveCredits: { total: number; };
     isAnalista: boolean;
     isIngeniero: boolean;
   };
@@ -34,27 +34,21 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
   
   // Calcular progreso basado solo en materias requeridas para el título
   const calculateProgress = () => {
-    // Electivas aprobadas por nivel (limitadas a las requeridas)
-    const electivas3roAprobadas = Math.min(Math.floor(stats.electiveCredits.year3 / 4), 1); // Máximo 1
-    const electivas4toAprobadas = Math.min(Math.floor(stats.electiveCredits.year4 / 3), 2); // Máximo 2  
-    const electivas5toAprobadas = Math.min(Math.floor(stats.electiveCredits.year5 / 3), 4); // Máximo 4
+    // Electivas requeridas: 20 créditos total
+    const electivasRequeridas = Math.min(stats.electiveCredits.total, 20);
     
-    // Total de electivas requeridas aprobadas
-    const electivasRequeridisAprobadas = electivas3roAprobadas + electivas4toAprobadas + electivas5toAprobadas;
+    // Materias obligatorias aprobadas = total aprobadas - electivas aprobadas (contando solo las que suman al mínimo)
+    const electivasAprobadas = subjects.filter(s => s.electiva && s.status === 'approved').length;
+    const materiasObligatoriasAprobadas = stats.approved - electivasAprobadas;
     
-    // Materias obligatorias aprobadas = total aprobadas - todas las electivas aprobadas
-    const todasElectivasAprobadas = Math.floor(stats.electiveCredits.year3 / 4) + 
-                                   Math.floor(stats.electiveCredits.year4 / 3) + 
-                                   Math.floor(stats.electiveCredits.year5 / 3);
-    const materiasObligatoriasAprobadas = stats.approved - todasElectivasAprobadas;
-    
-    // Total requerido para el título: materias obligatorias (37) + electivas requeridas (7)
-    const materiasObligatoriasTotal = 37; // Total de materias no electivas (corregido de 36 a 37)
-    const electivasRequeridisTotal = 7; // 1 + 2 + 4
+    // Total requerido para el título: materias obligatorias (37) + electivas requeridas (20 créditos = ~7 materias)
+    const materiasObligatoriasTotal = 37; // Total de materias no electivas
+    const electivasRequeridisTotal = 7; // Aproximadamente 7 materias para 20 créditos
     const totalRequerido = materiasObligatoriasTotal + electivasRequeridisTotal; // = 44
     
-    // Total aprobado para el título
-    const totalAprobado = materiasObligatoriasAprobadas + electivasRequeridisAprobadas;
+    // Total aprobado para el título (limitando electivas a las requeridas)
+    const electivasEquivalentes = Math.min(Math.floor(electivasRequeridas / 3), electivasRequeridisTotal);
+    const totalAprobado = materiasObligatoriasAprobadas + electivasEquivalentes;
     
     // Limitar el porcentaje a máximo 100%
     const percentage = Math.min((totalAprobado / totalRequerido) * 100, 100);
@@ -253,16 +247,14 @@ export function ControlPanel({ onResetAll, stats, permanentMode, onTogglePermane
         <CardContent className="space-y-2">
           <div className="text-xs space-y-1">
             <div className="flex justify-between">
-              <span>3° año:</span>
-              <span className="font-medium">{stats.electiveCredits.year3}/4</span>
+              <span>Total:</span>
+              <span className="font-medium">{stats.electiveCredits.total}/20</span>
             </div>
-            <div className="flex justify-between">
-              <span>4° año:</span>
-              <span className="font-medium">{stats.electiveCredits.year4}/6</span>
-            </div>
-            <div className="flex justify-between">
-              <span>5° año:</span>
-              <span className="font-medium">{stats.electiveCredits.year5}/10</span>
+            <div className="w-full bg-secondary rounded-full h-2 mt-2">
+              <div 
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${Math.min((stats.electiveCredits.total / 20) * 100, 100)}%` }}
+              />
             </div>
           </div>
         </CardContent>

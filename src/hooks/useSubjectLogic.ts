@@ -6,9 +6,7 @@ import { useSubjectDatabase } from './useSubjectDatabase';
 
 // Tipos para el manejo de créditos de electivas
 interface ElectiveCredits {
-  year3: number; // necesarios: 4
-  year4: number; // necesarios: 6  
-  year5: number; // necesarios: 10
+  total: number; // necesarios: 20
 }
 
 export function useSubjectLogic(initialSubjects: Subject[]) {
@@ -49,21 +47,20 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
 
   // Calcular créditos de electivas
   const calculateElectiveCredits = useCallback((allSubjects: Subject[]): ElectiveCredits => {
-    const credits = { year3: 0, year4: 0, year5: 0 };
+    let total = 0;
     
     allSubjects.forEach(subject => {
       if (subject.electiva && subject.status === 'approved') { // Solo créditos con electivas aprobadas
-        if (subject.nivel === 3) {
-          credits.year3 += 4;
-        } else if (subject.nivel === 4) {
-          credits.year4 += 3;
-        } else if (subject.nivel === 5) {
-          credits.year5 += 3;
+        // Backend vale 4 créditos, todas las demás electivas valen 3
+        if (subject.nombre.toLowerCase().includes('backend')) {
+          total += 4;
+        } else {
+          total += 3;
         }
       }
     });
     
-    return credits;
+    return { total };
   }, []);
 
   // Función para verificar si una materia está habilitada para cursar
@@ -121,10 +118,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
           };
         }
 
-        const hasEnoughCredits = 
-          (subject.nivel === 3 && credits.year3 >= 4) ||
-          (subject.nivel === 4 && credits.year4 >= 6) ||
-          (subject.nivel === 5 && credits.year5 >= 10);
+        const hasEnoughCredits = credits.total >= 20;
         
         if (hasEnoughCredits) {
           // Si ya se tienen suficientes créditos, cambiar automáticamente a opcional
@@ -325,8 +319,8 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Verificar si se cumple para Analista o Ingeniero
     const seminarioIntegrador = subjects.find(s => s.id === 99);
     const proyectoFinal = subjects.find(s => s.id === 36);
-    const isAnalista = seminarioIntegrador?.status === 'approved' && credits.year3 >= 4;
-    const isIngeniero = proyectoFinal?.status === 'approved' && credits.year4 >= 6 && credits.year5 >= 10;
+    const isAnalista = seminarioIntegrador?.status === 'approved' && credits.total >= 20;
+    const isIngeniero = proyectoFinal?.status === 'approved' && credits.total >= 20;
 
     return {
       approved: counts.approved || 0,
