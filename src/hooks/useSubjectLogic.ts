@@ -319,7 +319,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
     // Verificar si se cumple para Analista o Ingeniero
     const seminarioIntegrador = subjects.find(s => s.id === 99);
     const proyectoFinal = subjects.find(s => s.id === 36);
-    const isAnalista = seminarioIntegrador?.status === 'approved' && credits.total >= 20;
+    const isAnalista = seminarioIntegrador?.status === 'approved' && credits.total >= 4;
     const isIngeniero = proyectoFinal?.status === 'approved' && credits.total >= 20;
 
     return {

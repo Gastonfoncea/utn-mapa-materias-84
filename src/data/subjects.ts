@@ -605,8 +605,8 @@ const subjectsData = [
     "nivel": 5,
     "nombre": "Seguridad en el Desarrollo de Software",
     "modalidad": "2C",
-    "correlativasRegular": [19, 26],
-    "correlativasAprobada": [8, 20],
+    "correlativasRegular": [19, 20, 23], // Bases de Datos, Desarrollo de Software, Diseño de Sistemas
+    "correlativasAprobada": [8, 15], // Sistemas y Procesos de Negocio, Sistemas Operativos
     "correlativasRendir": [],
     "cargaHoraria": 3,
     "electiva": true
