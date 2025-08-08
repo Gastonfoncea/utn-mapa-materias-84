@@ -109,15 +109,6 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
       
       // Para electivas, verificar si ya se tienen suficientes créditos
       if (subject.electiva && subject.status !== 'elective-sufficient') {
-        // Backend de Aplicaciones (id: 201) no puede ser opcional
-        if (subject.id === 201) {
-          const available = isSubjectAvailable(subject, updatedSubjects);
-          return {
-            ...subject,
-            status: (available ? 'available' : 'locked') as SubjectStatus
-          };
-        }
-
         const hasEnoughCredits = credits.total >= 20;
         
         if (hasEnoughCredits) {
@@ -125,7 +116,7 @@ export function useSubjectLogic(initialSubjects: Subject[]) {
           return { ...subject, status: 'optional' as SubjectStatus };
         }
 
-        // Si no se tienen suficientes créditos pero está disponible, mantener como elective-sufficient
+        // Si no se tienen suficientes créditos pero está disponible, mantener como available
         const available = isSubjectAvailable(subject, updatedSubjects);
         if (available && subject.status === 'locked') {
           return { ...subject, status: 'available' as SubjectStatus };
